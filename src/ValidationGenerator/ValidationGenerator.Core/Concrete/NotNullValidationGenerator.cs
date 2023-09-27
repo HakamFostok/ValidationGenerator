@@ -1,29 +1,57 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Diagnostics;
+using ValidationGenerator.Shared;
 
-namespace ValidationGenerator.Core.Concrete;
-
-[Generator]
-public class NotNullValidationGenerator : ISourceGenerator
+namespace ValidationGenerator.Core.Concrete
 {
-    public NotNullValidationGenerator()
+    [Generator]
+    public class NotNullValidationGenerator : ISourceGenerator
     {
+        public NotNullValidationGenerator()
+        {
+#if DEBUG
+            if (!Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+#endif 
+        }
+        public void Execute(GeneratorExecutionContext context)
+        {
 
-    }
-    public void Execute(GeneratorExecutionContext context)
-    {
+#if DEBUG
+            Debug.WriteLine("Execute code generator");
 
+            if (!Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+#endif 
+
+        }
+
+        public void Initialize(GeneratorInitializationContext context)
+        {
+#if DEBUG
+            if (!Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+#endif 
+            try
+            {
+                context.RegisterForSyntaxNotifications(() =>
+            new AttributeSyntaxReceiver<NotNullAttribute>());
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+            
+        }
     }
 
-    public void Initialize(GeneratorInitializationContext context)
-    {
-        Debugger.Launch();
-        context.RegisterForSyntaxNotifications(() =>
-        new AttributeSyntaxReceiver<NotNullAttribute>());
-    }
+
 }
 
-[AttributeUsage(AttributeTargets.Property)]
-public class NotNullAttribute : Attribute
-{
-}

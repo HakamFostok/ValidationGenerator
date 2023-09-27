@@ -1,36 +1,43 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
-namespace ValidationGenerator.Core.Concrete;
-
-public class AttributeSyntaxReceiver<TAttribute> : ISyntaxReceiver
-   where TAttribute : Attribute
+namespace ValidationGenerator.Core.Concrete
 {
-    public IList<PropertyDeclarationSyntax> Properties { get; } = new List<PropertyDeclarationSyntax>();
 
-    public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
+    public class AttributeSyntaxReceiver<TAttribute> : ISyntaxReceiver
+       where TAttribute : Attribute
     {
-        if (syntaxNode is PropertyDeclarationSyntax classDeclarationSyntax &&
-            classDeclarationSyntax.AttributeLists.Count > 0 &&
-            classDeclarationSyntax.AttributeLists
-                .Any(al => al.Attributes
-                    .Any(a => a.Name.ToString().EnsureEndsWith("Attribute").Equals(typeof(TAttribute).Name))))
+        public IList<PropertyDeclarationSyntax> Properties { get; } = new List<PropertyDeclarationSyntax>();
+
+        public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
-            Properties.Add(classDeclarationSyntax);
+            if (syntaxNode is PropertyDeclarationSyntax classDeclarationSyntax &&
+                classDeclarationSyntax.AttributeLists.Count > 0 &&
+                classDeclarationSyntax.AttributeLists
+                    .Any(al => al.Attributes
+                        .Any(a => a.Name.ToString().EnsureEndsWith("Attribute").Equals(typeof(TAttribute).Name))))
+            {
+                Properties.Add(classDeclarationSyntax);
+            }
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static string EnsureEndsWith(
+            this string source,
+            string suffix)
+        {
+            if (source.EndsWith(suffix))
+            {
+                return source;
+            }
+            return source + suffix;
         }
     }
 }
 
-public static class StringExtensions
-{
-    public static string EnsureEndsWith(
-        this string source,
-        string suffix)
-    {
-        if (source.EndsWith(suffix))
-        {
-            return source;
-        }
-        return source + suffix;
-    }
-}
+
