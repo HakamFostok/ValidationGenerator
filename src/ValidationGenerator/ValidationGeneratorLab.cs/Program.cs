@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-using ValidationGenerator.Shared;
+﻿using ValidationGenerator.Shared;
 
 User user = new()
 {
