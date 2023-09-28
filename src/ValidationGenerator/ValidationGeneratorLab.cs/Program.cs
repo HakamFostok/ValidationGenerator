@@ -15,7 +15,8 @@ user.Validate();
 Console.WriteLine("Test");
 
 
-public class User : ValidationMarker
+[ValidationGenerator]
+public partial class User 
 {
     [NotNull]
     public string Id { get; set; } = string.Empty;
@@ -23,17 +24,3 @@ public class User : ValidationMarker
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }
-
-public class ValidationMarker
-{
-    public void Validate()
-    {
-
-    }
-
-    public Task ValidateAsync()
-    {
-        return Task.CompletedTask;
-    }
-}
-
