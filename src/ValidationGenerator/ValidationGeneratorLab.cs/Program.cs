@@ -13,7 +13,7 @@ Console.WriteLine("Test");
 [ValidationGenerator]
 public partial class User 
 {
-    [NotNull]
+    [NotNull(ErrorMessage = "The message that will be used when throw exception and validation error")]
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
