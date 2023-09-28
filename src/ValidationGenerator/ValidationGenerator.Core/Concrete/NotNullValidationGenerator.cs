@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -273,5 +274,34 @@ namespace ValidationGenerator.Core.Concrete
             return classesToGenerate;
         }
     }
+
+
+
+//    [Generator]
+//    public class NotNullValidationGenerator : ISourceGenerator
+//    {
+//        public void Execute(GeneratorExecutionContext context)
+//        {
+//#if DEBUG
+
+//            if (!Debugger.IsAttached)
+//            {
+//                Debugger.Launch();
+//            }
+
+
+//            var classes = context.Compilation.SyntaxTrees.Where(x => x.GetText().ToString().Contains("[Vali")).ToList();
+
+//            // context.Compilation.SyntaxTrees.Where(x => x.GetText().ToString().Contains("[Vali")).ToList().Where(x => x.GetText().ToString().Contains("[NotNul")).ToList()
+
+
+//#endif        
+//        }
+
+//        public void Initialize(GeneratorInitializationContext context)
+//        {
+
+//        }
+//    }
 }
 
