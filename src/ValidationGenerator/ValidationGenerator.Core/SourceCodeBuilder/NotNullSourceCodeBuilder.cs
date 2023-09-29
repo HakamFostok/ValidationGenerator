@@ -4,21 +4,19 @@ using System.Text;
 
 namespace ValidationGenerator.Core.SourceCodeBuilder
 {
-    public class NotNullSourceCodeBuilder
+    public class NotNullSourceCodeBuilder : IValidationSourceCodeBuilder
     {
         private readonly List<string> _properties;
         public NotNullSourceCodeBuilder(List<string> properties)
         {
             _properties = properties;
         }
-
         public string GetSourceCode()
         {
             string propertyChecks = IfCheckBuilderForProperties(_properties);
             return MethodBuilder(propertyChecks);
         }
-
-        private string MethodBuilder(string nullCheckForProperties)
+        public string MethodBuilder(string nullCheckForProperties)
         {
             StringBuilder codeBuilder = new StringBuilder();
             codeBuilder.AppendLine("        public void ThrowIfNull()");
@@ -29,7 +27,7 @@ namespace ValidationGenerator.Core.SourceCodeBuilder
             codeBuilder.AppendLine("        }");
             return codeBuilder.ToString();
         }
-        private string IfCheckBuilderForProperties(List<string> properties)
+        public string IfCheckBuilderForProperties(List<string> properties)
         {
             StringBuilder codeBuilder = new StringBuilder();
             foreach (string property in properties)
