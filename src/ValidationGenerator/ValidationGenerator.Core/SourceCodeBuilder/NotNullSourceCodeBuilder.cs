@@ -1,6 +1,16 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using System.Linq;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
+using ValidationGenerator.Core.Constants;
 
 namespace ValidationGenerator.Core.SourceCodeBuilder
 {
@@ -9,6 +19,7 @@ namespace ValidationGenerator.Core.SourceCodeBuilder
         private readonly List<string> _properties;
         private readonly string _nameSpaceValue;
         private readonly string _className;
+
         public NotNullSourceCodeBuilder(string nameSpaceValue,string className,List<string> properties)
         {
             _nameSpaceValue = nameSpaceValue;
@@ -69,9 +80,6 @@ namespace ValidationGenerator.Core.SourceCodeBuilder
             codeBuilder.AppendLine("}");
             return codeBuilder.ToString();
         }
-
-
-
 
     }
 }

@@ -4,6 +4,18 @@ using TestLab;
 
 Console.WriteLine("TESTTTT");
 
-User user = new User();
 
-user.ThrowIfNull();
+
+try
+{
+
+    Product product = new Product();
+
+    product.ThrowIfNull();
+}
+catch (Exception ex)
+{
+
+    throw;
+}
+
