@@ -6,4 +6,4 @@ Console.WriteLine("TESTTTT");
 
 User user = new User();
 
-user.ThrowIfNotValid();
+user.ThrowIfNull();

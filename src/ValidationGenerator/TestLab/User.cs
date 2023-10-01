@@ -7,6 +7,9 @@ public partial class User
 {
     [NotNull]
     public string Id { get; set; }
+
+    [NotNull]
+    public string Name { get; set; }    
 }
 
 
