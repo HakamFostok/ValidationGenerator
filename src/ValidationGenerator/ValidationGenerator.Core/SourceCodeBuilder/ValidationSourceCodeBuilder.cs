@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -137,7 +138,7 @@ namespace ValidationGenerator.Core.SourceCodeBuilder
     public class PropertyValidationData
     {
         public string ProperyName { get; set; }
-        public Type ProperyType { get; set; }
+        public ITypeSymbol ProperyType { get; set; }
         public List<AttributeValidationData> AttributeValidationList { get; set; }
         public PropertyValidationData()
         {

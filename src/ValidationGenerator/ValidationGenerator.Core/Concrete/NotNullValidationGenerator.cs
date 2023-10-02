@@ -8,91 +8,174 @@ using System.Collections.Generic;
 using ValidationGenerator.Core.SourceCodeBuilder;
 using ValidationGenerator.Core.Constants;
 using System;
+using System.Collections.Immutable;
+using System.Threading;
 
 namespace ValidationGenerator.Core.Concrete
 {
 
 
     [Generator]
-    public class NotNullValidationGenerator : ISourceGenerator
+    public class NotNullValidationGenerator : IIncrementalGenerator
     {
-        public void Execute(GeneratorExecutionContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
 
-            List<SyntaxTree> classWithAttributes = context.Compilation.SyntaxTrees.Where(st => st.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
-                    .Any(p => p.DescendantNodes().OfType<AttributeSyntax>().Any(x => x.Name.GetText().ToString() == "ValidationGenerator"))).ToList();
+            IncrementalValuesProvider<ClassDeclarationSyntax> classWithAttributes = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
+            .Where(static m => m is not null)!;
 
+            IncrementalValueProvider<(Compilation, ImmutableArray<ClassDeclarationSyntax>)> compilationAndClasses
+            = context.CompilationProvider.Combine(classWithAttributes.Collect());
 
-            List<ClassValidationData> classValidationDatas = new List<ClassValidationData>();
+            context.RegisterSourceOutput(compilationAndClasses,
+                static (spc, source) => Execute(source.Item1, source.Item2, spc));
 
-            ValidationSourceCodeBuilder notNullSourceCodeBuilder;
-            string soruceCode = string.Empty;
+#if DEBUG
 
-            classWithAttributes.ForEach(classDeclareation =>
+            if (!Debugger.IsAttached)
             {
-                ClassValidationData classValidationData = new ClassValidationData();
-                classValidationData.NameSpace = GetNameSpace(classDeclareation);
-                classValidationData.ClassName = GetClassName(classDeclareation);
+                Debugger.Launch();
+            }
 
-                classValidationData.PropertyValidationList = new List<PropertyValidationData>();
+#endif
 
-                var propertyDeclarations = classDeclareation.GetRoot()
-               .DescendantNodes()
-               .OfType<PropertyDeclarationSyntax>();
+        }
 
-                foreach (var propertyDeclaration in propertyDeclarations ) 
+        private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+        {
+            if (classes.IsDefaultOrEmpty)
+            {
+                // nothing to do yet
+                return;
+            }
+            List<ClassValidationData> classesToGenerate = GetTypesToGenerate(compilation, classes.Distinct(), context.CancellationToken);
+            classesToGenerate.ForEach((x) =>
+            {
+                context.AddSource(x.ClassName + "_Validator_G", SourceText.From(x.GetSourceCode(), Encoding.UTF8));
+            });
+        }
+
+        private static List<ClassValidationData> GetTypesToGenerate(
+        Compilation compilation,
+        IEnumerable<ClassDeclarationSyntax> classes,
+        CancellationToken ct)
+        {
+            List<ClassValidationData> classesToGenerate = new();
+            INamedTypeSymbol? validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
+           
+
+            if (validationGeneratorAttribute == null)
+            {
+                // nothing to do if this type isn't available
+                return classesToGenerate;
+            }
+
+            foreach (ClassDeclarationSyntax classDeclarationSyntax in classes)
+            {
+                // stop if we're asked to
+                ct.ThrowIfCancellationRequested();
+
+                SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
+                if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
                 {
-                    PropertyValidationData propertyValidationData = new PropertyValidationData();
-
-                    propertyValidationData.ProperyName = propertyDeclaration.Identifier.ValueText;
-                    propertyValidationData.ProperyType = Type.GetType(propertyDeclaration.Type.ToString());
-
-
-                    var asd = propertyDeclaration.SyntaxTree.GetRoot().DescendantNodes().OfType<TypeDeclarationSyntax>().FirstOrDefault();
-                    
+                    // report diagnostic, something went wrong
+                    continue;
                 }
 
+                ClassValidationData classValidationData = new();
+                classValidationData.ClassName = classSymbol.Name;
+                classValidationData.NameSpace = classSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : classSymbol.ContainingNamespace.ToString();
+                classValidationData.PropertyValidationList = new();
+
+                AttributeData? validationAtt = classSymbol.GetAttributes().FirstOrDefault(a => validationGeneratorAttribute?.Equals(a.AttributeClass, SymbolEqualityComparer.Default) ?? false);
+
+                if (validationAtt is null)
+                    continue;
+
+                //IEnumerable<IFieldSymbol> fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
+
+                //foreach (IFieldSymbol field in fields)
+                //{
+                    
+                //}
+
+                IEnumerable<IPropertySymbol> properties = classSymbol
+                    .GetMembers()
+                    .OfType<IPropertySymbol>();
+
+                foreach (IPropertySymbol property in properties)
+                {
+                    //Type type = property.Type.OriginalDefinition.;
+
+                    var attributes = property.GetAttributes();
+
+                    
+                    List<AttributeValidationData> attributesValidationData = new();
+
+                    foreach (var attribute in attributes)
+                    {
+                        AttributeValidationData attributeValidationData = new();
+                        attributeValidationData.AttributeName = attribute.AttributeClass.Name;
+                        attributeValidationData.AttributeArguments = attribute.NamedArguments.Select(arg =>
+                        {
+                            return new AttributeArgumentInfo(arg.Key, arg.Value.Value.ToString());
+                            
+                        }).ToList();
+                        attributesValidationData.Add(attributeValidationData);
+                    }
+
+                    classValidationData.PropertyValidationList.Add(new()
+                    {
+                        ProperyName = property.Name,    
+                        ProperyType = property.Type,
+                        AttributeValidationList = attributesValidationData
+                    });
+                }
+
+                classesToGenerate.Add(classValidationData);
+            }
+
+            return classesToGenerate;
+        }
 
 
-                //var propertyValidationList = classDeclareation.GetRoot()
-                // .DescendantNodes()
-                // .OfType<AttributeSyntax>()
-                // .Where(z => z.Name.GetText().ToString() != ValidationGeneratorKeys.ClassAttribute)
-                // .ToList().ConvertAll(attribute =>
-                // {
 
-                //     var properties = attributes.FirstOrDefault().SyntaxTree.GetRoot().DescendantNodes().OfType<PropertyDeclarationSyntax>().ToList();
+        #region Private Methods 
 
-                //     List<AttributeArgumentInfo> argumentInfoList = new List<AttributeArgumentInfo>();
-                //     if (attribute.ArgumentList != null)
-                //     {
-                //         argumentInfoList = attribute.ArgumentList.Arguments.ToList().ConvertAll(argument =>
-                //         {
-                //             string argumentName = argument.NameEquals.Name.Identifier.ValueText;
-                //             string argumentExpression = argument.Expression.ToString();
-                //             return new AttributeArgumentInfo(argumentName, argumentExpression);
-                //         });
-                //     }
+        private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
+        node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
 
-                //     PropertyValidationData propertyValidationData = new PropertyValidationData()
-                //     {
-                //         ClassName = className,
-                //         AttributeName = attribute.Name.GetText().ToString(),
-                //         ProperyName = attribute.SyntaxTree.GetRoot().DescendantNodes().OfType<PropertyDeclarationSyntax>().FirstOrDefault().Identifier.ValueText,
-                //         AttributeArguments = argumentInfoList
-                //     };
-                //     return propertyValidationData;
-                // });
+        private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+        {
+            // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
+            ClassDeclarationSyntax classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
+            // loop through all the attributes on the method
+            foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
+            {
+                foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
+                {
+                    if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
+                    {
+                        // weird, we couldn't get the symbol, ignore it
+                        continue;
+                    }
 
-                //var props = attributes.FirstOrDefault().SyntaxTree.GetRoot().DescendantNodes().OfType<PropertyDeclarationSyntax>().ToList();
-                //List<string> propertyNames = props.ConvertAll(c => c.Identifier.ValueText);
+                    INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
+                    string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                //notNullSourceCodeBuilder = new ValidationSourceCodeBuilder(namespaceValue, className, propertyNames);
-                //string sourceCode = notNullSourceCodeBuilder.GetSourceCode();
-                //context.AddSource(className + "_Validator_G", SourceText.From(sourceCode, Encoding.UTF8));
-            });
-
+                    // Is the attribute the [Disposable] attribute?
+                    if (fullName == "ValidationGenerator.Shared.ValidationGeneratorAttribute")
+                    {
+                        // return the class
+                        return classDeclarationSyntax;
+                    }
+                }
+            }
+            return null;
         }
 
         private static string GetClassName(SyntaxTree classDeclareation)
@@ -117,19 +200,8 @@ namespace ValidationGenerator.Core.Concrete
             return namespaceValue;
         }
 
-        public void Initialize(GeneratorInitializationContext context)
-        {
+        #endregion
 
-#if DEBUG
-
-            if (!Debugger.IsAttached)
-            {
-                Debugger.Launch();
-            }
-
-#endif
-
-        }
     }
 }
 

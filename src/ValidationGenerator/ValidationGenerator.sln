@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Shared", "ValidationGenerator.Shared\ValidationGenerator.Shared.csproj", "{EFE28E77-7C9B-4C38-B7B0-8449225D3D2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLab", "TestLab\TestLab.csproj", "{7F39E41B-033E-437A-BAC3-1CBA470C448D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLab", "TestLab\TestLab.csproj", "{7F39E41B-033E-437A-BAC3-1CBA470C448D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plans", "Plans", "{4C4471F0-B045-4744-89FC-A29FEC3B85BC}"
+	ProjectSection(SolutionItems) = preProject
+		Step-1.txt = Step-1.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

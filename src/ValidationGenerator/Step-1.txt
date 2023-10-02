@@ -1,0 +1,15 @@
+TODOS :
+
+1. Attribute namings
+
+    - instead of NotNull > NotNullGenerator
+
+2. Handle validation according to type dynamicly
+
+3. Attribute Types and Attribute arguments +
+
+4. ValidationGenerator attribute arguments :
+    
+    - IsValid boolean property generation
+    - ValidationResult mehtod generation (System.Component..)
+
