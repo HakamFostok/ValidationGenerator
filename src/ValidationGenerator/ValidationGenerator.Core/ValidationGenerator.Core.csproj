@@ -20,8 +20,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="icon.jpg" Pack="true" PackagePath="\" />
-		<None Include="../../README.md" Pack="true" PackagePath="\" />
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />

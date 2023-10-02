@@ -1,18 +1,17 @@
 ﻿
 using ValidationGenerator.Shared;
 
-namespace TestLab
+namespace TestLab;
+
+[ValidationGenerator]
+public partial class Product
 {
-    [ValidationGenerator]
-    public partial class Product
-    {
-        [NotNull]
-        public string Id { get; set; }
+    [NotNull]
+    public string Id { get; set; }
 
-        [NotNull]
-        public string Name { get; set; }
+    [NotNull]
+    public string Name { get; set; }
 
-        [NotNull]
-        public string Code { get; set; }
-    }
+    [NotNull(ErrorMessage = "Product code cannot be null")]
+    public string Code { get; set; }
 }

@@ -2,14 +2,15 @@
 
 using TestLab;
 
-Console.WriteLine("TESTTTT");
+Console.WriteLine("Validation Generator");
 
 try
 {
-    User user = new User();
-
-    user.Name = null;
-    user.Id = null;
+    User user = new()
+    {
+        Name = null,
+        Id = null
+    };
     user.ThrowIfNotValid();
 
 
@@ -23,11 +24,12 @@ catch (Exception)
 
 try
 {
-    Product product = new();
-
-    product.Name = null;
-    product.Id = null;
-    product.Code = null;
+    Product product = new()
+    {
+        Name = null,
+        Id = null,
+        Code = null
+    };
     product.ThrowIfNotValid();
 
 
