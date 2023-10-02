@@ -4,18 +4,40 @@ using TestLab;
 
 Console.WriteLine("TESTTTT");
 
+try
+{
+    User user = new User();
+
+    user.Name = null;
+    user.Id = null;
+    user.ThrowIfNotValid();
+
+
+}
+catch (Exception)
+{
+
+	throw;
+}
 
 
 try
 {
+    Product product = new();
 
-    Product product = new Product();
+    product.Name = null;
+    product.Id = null;
+    product.Code = null;
+    product.ThrowIfNotValid();
 
-    product.ThrowIfNull();
+
 }
-catch (Exception ex)
+catch (Exception)
 {
 
     throw;
 }
+
+
+
 

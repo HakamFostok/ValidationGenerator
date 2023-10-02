@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ValidationGenerator.Core.Constants
+﻿namespace ValidationGenerator.Core.Constants
 {
     public static class ValidationGeneratorKeys
     {
