@@ -3,7 +3,7 @@ using ValidationGenerator.Shared;
 
 namespace TestLab;
 
-[ValidationGenerator]
+[ValidationGenerator(GenerateThrowIfNotValid = true, GenerateIsValidProperty = false, GenerateValidationResult = false)]
 public partial class Product
 {
     [NotNullGenerator]

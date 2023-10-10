@@ -8,6 +8,7 @@ using ValidationGenerator.Core.SourceCodeBuilder;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Diagnostics;
+using System;
 
 namespace ValidationGenerator.Core;
 
@@ -37,9 +38,6 @@ public class ValidationGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(compilationAndClasses,
             static (spc, source) => Execute(source.Item1, source.Item2, spc));
-
-
-
     }
 
     private static void Execute(
@@ -52,11 +50,21 @@ public class ValidationGenerator : IIncrementalGenerator
             // nothing to do yet
             return;
         }
-        List<ClassValidationData> classesToGenerate = GetTypesToGenerate(compilation, classes.Distinct(), context.CancellationToken);
-        classesToGenerate.ForEach((x) =>
+        try
         {
-            context.AddSource(x.ClassName + "_Validator_G", SourceText.From(x.GetSourceCode(), Encoding.UTF8));
-        });
+            List<ClassValidationData> classesToGenerate = GetTypesToGenerate(compilation, classes.Distinct(), context.CancellationToken);
+            classesToGenerate.ForEach((x) =>
+            {
+                x.SourceProductionContext = context;
+                context.AddSource(x.ClassName + "_Validator_G", SourceText.From(x.GetSourceCode(), Encoding.UTF8));
+            });
+        }
+        catch (Exception)
+        {
+           
+            throw;
+        }
+       
     }
 
     private static List<ClassValidationData> GetTypesToGenerate(
@@ -66,25 +74,22 @@ public class ValidationGenerator : IIncrementalGenerator
     {
         List<ClassValidationData> classesToGenerate = new();
         INamedTypeSymbol validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
-       
-
-        if (validationGeneratorAttribute == null)
+        if (validationGeneratorAttribute is null)
         {
-            // nothing to do if this type isn't available
             return classesToGenerate;
         }
-
         foreach (ClassDeclarationSyntax classDeclarationSyntax in classes)
         {
-            // stop if we're asked to
             ct.ThrowIfCancellationRequested();
 
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
             if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
             {
-                // report diagnostic, something went wrong
                 continue;
             }
+
+            
+
 
             ClassValidationData classValidationData = new()
             {
@@ -98,11 +103,32 @@ public class ValidationGenerator : IIncrementalGenerator
             if (validationAtt is null)
                 continue;
 
+            foreach (var namedArgument in validationAtt.NamedArguments)
+            {
+                string argumentName = namedArgument.Key;
+                string argumentValue = namedArgument.Value.Value.ToString();
+                if (argumentName.Equals(nameof(ClassValidationData.GenerateThrowIfNotValid)))
+                {
+                    classValidationData.GenerateThrowIfNotValid = Convert.ToBoolean(argumentValue);
+                    continue;
+                }
+                if (argumentName.Equals(nameof(ClassValidationData.GenerateValidationResult)))
+                {
+                    classValidationData.GenerateValidationResult = Convert.ToBoolean(argumentValue);
+                    continue;
+                }
+                if (argumentName.Equals(nameof(ClassValidationData.GenerateIsValidProperty)))
+                {
+                    classValidationData.GenerateIsValidProperty = Convert.ToBoolean(argumentValue);
+                    continue;
+                }
+            }
+
             //IEnumerable<IFieldSymbol> fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
 
             //foreach (IFieldSymbol field in fields)
             //{
-                
+
             //}
 
             IEnumerable<IPropertySymbol> properties = classSymbol
@@ -150,24 +176,17 @@ public class ValidationGenerator : IIncrementalGenerator
     node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
     private static ClassDeclarationSyntax GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
-        // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         ClassDeclarationSyntax classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
-
-        // loop through all the attributes on the method
         foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
         {
             foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
             {
                 if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
                 {
-                    // weird, we couldn't get the symbol, ignore it
                     continue;
                 }
-
                 INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 string fullName = attributeContainingTypeSymbol.ToDisplayString();
-
-                // Is the attribute the [Disposable] attribute?
                 if (fullName == "ValidationGenerator.Shared.ValidationGeneratorAttribute")
                 {
                     // return the class
