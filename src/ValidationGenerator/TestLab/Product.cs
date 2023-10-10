@@ -6,12 +6,12 @@ namespace TestLab;
 [ValidationGenerator]
 public partial class Product
 {
-    [NotNull]
+    [NotNullGenerator]
     public string Id { get; set; }
 
-    [NotNull]
+    [NotNullGenerator]
     public string Name { get; set; }
 
-    [NotNull(ErrorMessage = "Product code cannot be null")]
+    [NotNullGenerator(ErrorMessage = "Product code cannot be null")]
     public string Code { get; set; }
 }

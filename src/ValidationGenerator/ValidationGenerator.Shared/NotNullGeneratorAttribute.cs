@@ -3,7 +3,7 @@
 namespace ValidationGenerator.Shared;
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NotNullAttribute : Attribute
+public sealed class NotNullGeneratorAttribute : Attribute
 {
     /// <summary>
     /// Gets or sets the error message that will be showed to the user when validation fail.

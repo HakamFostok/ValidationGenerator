@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
-
+using ValidationGenerator.Shared;
 
 namespace ValidationGenerator.Core.SourceCodeBuilder;
 
@@ -36,12 +37,42 @@ public class ClassValidationData
         StringBuilder codeBuilder = new ();
         foreach (var property in properties)
         {
-            codeBuilder.AppendLine();
-            codeBuilder.AppendLine("if (@@Prop@@ is null)".Replace("@@Prop@@", property.ProperyName));
-            codeBuilder.AppendLine("{");
-            codeBuilder.AppendLine("    throw new ArgumentNullException(nameof(@@Prop@@));".Replace("@@Prop@@", property.ProperyName));
-            codeBuilder.AppendLine("}");
-            codeBuilder.AppendLine();
+            foreach (var attributeValidation in property.AttributeValidationList)
+            {
+                string ifCondition = $"if ({property.ProperyName} @@Expression@@)";
+                string exceptionBlock = "throw new @@Exception@@(@@errorMessage@@)";
+                
+                if (attributeValidation.AttributeName.Equals(nameof(NotNullGeneratorAttribute)))
+                {
+                    ifCondition = ifCondition.Replace("@@Expression@@", "is null");
+                    exceptionBlock = exceptionBlock.Replace("@@Exception@@",nameof(ArgumentNullException));
+
+                    foreach (var attributeArgument in attributeValidation.AttributeArguments)
+                    {
+                        if (attributeArgument?.Name?.Equals(nameof(NotNullGeneratorAttribute.ErrorMessage)) == true)
+                        {
+                            exceptionBlock = exceptionBlock.Replace("@@errorMessage@@", $"\"{attributeArgument.Expression}\"");
+                        }
+                    }
+                }
+
+                if (exceptionBlock.Contains("@@errorMessage@@"))
+                {
+                    exceptionBlock = exceptionBlock.Replace("@@errorMessage@@", string.Empty);
+                }
+
+                // other attribute types will be checked
+
+                codeBuilder.AppendLine();
+                codeBuilder.AppendLine($"            {ifCondition}");
+                codeBuilder.AppendLine("            {");
+                codeBuilder.AppendLine($"                {exceptionBlock};");
+                codeBuilder.AppendLine("            }");
+                codeBuilder.AppendLine();
+
+
+            }
+           
         }
         return codeBuilder.ToString();
     }

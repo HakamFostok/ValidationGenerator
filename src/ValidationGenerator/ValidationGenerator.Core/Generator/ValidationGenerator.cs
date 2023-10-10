@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ValidationGenerator.Core.SourceCodeBuilder;
 using System.Collections.Immutable;
 using System.Threading;
+using System.Diagnostics;
 
 namespace ValidationGenerator.Core;
 
@@ -15,6 +16,15 @@ public class ValidationGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+
+#if DEBUG
+
+        if (!Debugger.IsAttached)
+        {
+            Debugger.Launch();
+        }
+
+#endif
 
         IncrementalValuesProvider<ClassDeclarationSyntax> classWithAttributes = context.SyntaxProvider
         .CreateSyntaxProvider(
@@ -28,14 +38,7 @@ public class ValidationGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(compilationAndClasses,
             static (spc, source) => Execute(source.Item1, source.Item2, spc));
 
-#if DEBUG
 
-        if (!Debugger.IsAttached)
-        {
-            Debugger.Launch();
-        }
-
-#endif
 
     }
 
