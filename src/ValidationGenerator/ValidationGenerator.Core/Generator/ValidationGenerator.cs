@@ -18,14 +18,14 @@ public class ValidationGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
-#if DEBUG
+//#if DEBUG
 
-        if (!Debugger.IsAttached)
-        {
-            Debugger.Launch();
-        }
+//        if (!Debugger.IsAttached)
+//        {
+//            Debugger.Launch();
+//        }
 
-#endif
+//#endif
 
         IncrementalValuesProvider<ClassDeclarationSyntax> classWithAttributes = context.SyntaxProvider
         .CreateSyntaxProvider(
@@ -126,7 +126,7 @@ public class ValidationGenerator : IIncrementalGenerator
 
             //IEnumerable<IFieldSymbol> fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
 
-            //foreach (IFieldSymbol field in fields)
+            //for each (IFieldSymbol field in fields)
             //{
 
             //}
@@ -139,6 +139,7 @@ public class ValidationGenerator : IIncrementalGenerator
             {
                 //Type type = property.Type.OriginalDefinition.;
 
+               
                 var attributes = property.GetAttributes();
 
                 
@@ -157,11 +158,22 @@ public class ValidationGenerator : IIncrementalGenerator
                     };
                     attributesValidationData.Add(attributeValidationData);
                 }
+                var equalsSyntax = property.DeclaringSyntaxReferences[0].GetSyntax() switch
+                {
+                    PropertyDeclarationSyntax propertySyntax => propertySyntax.Initializer,
+                    VariableDeclaratorSyntax variableSyntax => variableSyntax.Initializer,
+                    _ => throw new Exception("Unknown declaration syntax")
+                };
 
+                // If the property/field has an initializer
+                if (equalsSyntax is not null)
+                {
+                    var valueAsStr = equalsSyntax.Value.ToString();
+                }
                 classValidationData.PropertyValidationList.Add(new()
                 {
-                    ProperyName = property.Name,    
-                    ProperyType = property.Type,
+                    PropertyName = property.Name,    
+                    PropertyType = property.Type,
                     AttributeValidationList = attributesValidationData
                 });
             }

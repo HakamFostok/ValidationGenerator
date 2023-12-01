@@ -1,6 +1,7 @@
 ﻿
 
 using TestLab;
+using ValidationGenerator.Shared;
 
 Console.WriteLine("Validation Generator");
 
@@ -8,12 +9,10 @@ try
 {
     User user = new()
     {
-        Name = null,
+        Name = "asd",
         Id = null
     };
-    user.ThrowIfNotValid();
-
-
+    var result = user.GetValidationResult();
 }
 catch (Exception)
 {
@@ -22,23 +21,7 @@ catch (Exception)
 }
 
 
-try
-{
-    Product product = new()
-    {
-        Name = null,
-        Id = null,
-        Code = null
-    };
-    product.ThrowIfNotValid();
 
-
-}
-catch (Exception)
-{
-
-    throw;
-}
 
 
 

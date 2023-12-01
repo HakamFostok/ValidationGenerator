@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ValidationGenerator.Shared;
 
@@ -23,9 +24,9 @@ public class ClassValidationData
     public string GetSourceCode()
     {
         string throwIfNotValidMethodDeclaration = GenerateThrowIfNotValidMethod();
-        string isValidProperyDeclaration = GenerateIsValidPropertySource();
-        string validateResultFunctionDeclaration = GenerateValidationResultFunction();
-        return ClassBuilder(throwIfNotValidMethodDeclaration, validateResultFunctionDeclaration, isValidProperyDeclaration);
+        string isValidPropertyDeclaration = GenerateIsValidPropertySource();
+        string validateResultFunctionDeclaration = GenerateValidationResultFunction(PropertyValidationList);
+        return ClassBuilder(throwIfNotValidMethodDeclaration, validateResultFunctionDeclaration, isValidPropertyDeclaration);
     }
 
     private string GenerateThrowIfNotValidMethod()
@@ -50,18 +51,19 @@ public class ClassValidationData
         return codeBuilder.ToString();
     }
 
-    private string GenerateValidationResultFunction()
+    private string GenerateValidationResultFunction(List<PropertyValidationData> properties)
     {
         if (!GenerateValidationResult)
             return string.Empty;
-
-        return string.Empty;
+        return new ValidationResultMethodGenerator(properties).GetValidationResultMethod();
     }
 
     private string GenerateIsValidPropertySource()
     {
         if (!GenerateIsValidProperty)
             return string.Empty;
+
+
 
         return string.Empty;
     }
@@ -71,26 +73,25 @@ public class ClassValidationData
         StringBuilder codeBuilder = new();
         foreach (var property in properties)
         {
-
-            string fullTypeName = property.ProperyType.ToDisplayString(new SymbolDisplayFormat(
+            string fullTypeName = property.PropertyType.ToDisplayString(new SymbolDisplayFormat(
                 typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
                 genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
                 miscellaneousOptions: SymbolDisplayMiscellaneousOptions.None));
 
             foreach (var attributeValidation in property.AttributeValidationList)
             {
-                string ifCondition = $"if ({property.ProperyName} @@Expression@@)";
+                string ifCondition = $"if ({property.PropertyName} @@Expression@@)";
                 string exceptionBlock = "throw new @@Exception@@(@@errorMessage@@)";
 
                 if (attributeValidation.AttributeName.Equals(nameof(NotNullGeneratorAttribute)))
                 {
-                    if (!property.ProperyType.IsReferenceType)
+                    if (!property.PropertyType.IsReferenceType)
                     {
                         var diagnostic = Diagnostic.Create(
                         new DiagnosticDescriptor(
                             "VGGEN001", 
                             "Invalid Attribute Usage", 
-                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.ProperyName} ", 
+                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.PropertyName} ", 
                             "Source Generator", 
                             DiagnosticSeverity.Error, 
                             true),
@@ -131,7 +132,7 @@ public class ClassValidationData
         return codeBuilder.ToString();
     }
 
-    private string ClassBuilder(string throwIfNotValidMethodDeclareation, string validationResultFunctionDeclaration, string isValidPropertyDeclaration)
+    private string ClassBuilder(string throwIfNotValidMethodDeclaration, string validationResultFunctionDeclaration, string isValidPropertyDeclaration)
     {
         StringBuilder codeBuilder = new();
         codeBuilder.AppendLine("namespace @@namespace@@".Replace("@@namespace@@", NameSpace));
@@ -142,7 +143,7 @@ public class ClassValidationData
         codeBuilder.AppendLine(isValidPropertyDeclaration);
         codeBuilder.AppendLine();
         codeBuilder.AppendLine();
-        codeBuilder.AppendLine(throwIfNotValidMethodDeclareation);
+        codeBuilder.AppendLine(throwIfNotValidMethodDeclaration);
         codeBuilder.AppendLine();
         codeBuilder.AppendLine();
         codeBuilder.AppendLine(validationResultFunctionDeclaration);
