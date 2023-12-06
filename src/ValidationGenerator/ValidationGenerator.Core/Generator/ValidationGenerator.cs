@@ -18,14 +18,14 @@ public class ValidationGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
-//#if DEBUG
+#if DEBUG
 
-//        if (!Debugger.IsAttached)
-//        {
-//            Debugger.Launch();
-//        }
+        if (!Debugger.IsAttached)
+        {
+            Debugger.Launch();
+        }
 
-//#endif
+#endif
 
         IncrementalValuesProvider<ClassDeclarationSyntax> classWithAttributes = context.SyntaxProvider
         .CreateSyntaxProvider(

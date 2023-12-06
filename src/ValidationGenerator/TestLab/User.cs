@@ -10,7 +10,6 @@ public partial class User
     public string Id { get; set; }
 
     [NotNullGenerator(ErrorMessage = "User Name cannot be null")]
-    [EmailAddress]
     public string Name { get; set; }
 
 

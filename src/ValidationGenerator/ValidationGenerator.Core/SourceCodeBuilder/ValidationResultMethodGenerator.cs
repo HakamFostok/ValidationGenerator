@@ -64,7 +64,7 @@ public class ValidationResultMethodGenerator
                     string customErrorMessage = string.Empty;
                     string conditionSourceCode = string.Empty;
                     string defaultErrorMessage = string.Empty;
-                    if (fullTypeName.Equals(nameof(String), StringComparison.OrdinalIgnoreCase))
+                    if (fullTypeName.Equals(typeof(string).FullName, StringComparison.OrdinalIgnoreCase))
                     {
                         var validationInfo = StringValidation.GetNotNull(property.PropertyName);
                         conditionSourceCode = validationInfo.condition;
