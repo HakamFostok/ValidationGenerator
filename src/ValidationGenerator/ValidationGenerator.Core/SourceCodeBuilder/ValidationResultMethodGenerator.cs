@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
 using ValidationGenerator.Shared;
 
 namespace ValidationGenerator.Core.SourceCodeBuilder;
@@ -44,6 +45,12 @@ public class ValidationResultMethodGenerator
         foreach (PropertyValidationData property in properties)
         {
             StringBuilder ifChecksForProperty = new();
+
+            string fullTypeName = property.PropertyType.ToDisplayString(new SymbolDisplayFormat(
+                typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+                genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+                miscellaneousOptions: SymbolDisplayMiscellaneousOptions.None));
+
             foreach (var attributeValidation in property.AttributeValidationList)
             {
                 // This if block for only > NotNullGeneratorAttribute
@@ -54,21 +61,32 @@ public class ValidationResultMethodGenerator
                         // show diagnostic error
                         continue;
                     }
+                    string customErrorMessage = string.Empty;
+                    string conditionSourceCode = string.Empty;
+                    string defaultErrorMessage = string.Empty;
+                    if (fullTypeName.Equals(nameof(String), StringComparison.OrdinalIgnoreCase))
+                    {
+                        var validationInfo = StringValidation.GetNotNull(property.PropertyName);
+                        conditionSourceCode = validationInfo.condition;
+                        defaultErrorMessage = validationInfo.defaultErrorMessage;
+                    }
 
                     foreach (var attributeArgument in attributeValidation.AttributeArguments)
                     {
-                        if (attributeArgument?.Name?.Equals(nameof(NotNullGeneratorAttribute.ErrorMessage)) == true)
+                        
+                        if (attributeArgument?.Name?.Equals(nameof(BaseValidationAttribute.ErrorMessage)) == true)
                         {
-                            string conditionSourceCode = GetConditionSourceCode(ValidationConditionTypes.IsNull, property.PropertyName);
-                            string validationErrorMessage = GetValidationMessage(ValidationConditionTypes.IsNull, property.PropertyName);
-                            string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, validationErrorMessage);
-                            if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                            customErrorMessage = attributeArgument.Expression;
+                        }
+                       
+                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
+                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                        {
+                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
+                            if (!checkedProps.Contains(property.PropertyName))
                             {
-                                ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                                if (!checkedProps.Contains(property.PropertyName))
-                                {
-                                    checkedProps.Add(property.PropertyName);
-                                }
+                                checkedProps.Add(property.PropertyName);
                             }
                         }
                     }
@@ -95,44 +113,6 @@ public class ValidationResultMethodGenerator
             stringBuilder.AppendLine("    }");
         }
         return stringBuilder.ToString();
-    }
-
-    private static string GetConditionSourceCode(ValidationConditionTypes validationCondition, string propertyName)
-    {
-        string condition;
-        switch (validationCondition)
-        {
-            case ValidationConditionTypes.IsNull:
-                {
-                    condition = $"{propertyName} is null";
-                    break;
-                }
-            default:
-                {
-                    condition = string.Empty;
-                    break;
-                }
-        }
-        return condition;
-    }
-
-    private static string GetValidationMessage(ValidationConditionTypes validationCondition, string propertyName)
-    {
-        string message;
-        switch (validationCondition)
-        {
-            case ValidationConditionTypes.IsNull:
-                {
-                    message = $"{propertyName} cannot be null";
-                    break;
-                }
-            default:
-                {
-                    message = string.Empty;
-                    break;
-                }
-        }
-        return message;
     }
 
     private static string GetPrivatePropertyValidationResultMethodSourceCode(string propertyName, string ifCheckForPropertySourceCode)
