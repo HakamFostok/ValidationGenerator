@@ -13,5 +13,6 @@ public class ValidationResult
 public class PropertyValidationResult
 {
     public string PropertyName { get; set; }   = string.Empty;
+    public object Value { get; set; } = null;
     public List<string> ErrorMessages { get; set; } = new();
 }
