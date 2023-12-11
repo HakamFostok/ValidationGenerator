@@ -27,7 +27,7 @@ public class ValidationResultMethodGenerator
         StringBuilder stringBuilder = new();
         stringBuilder.AppendLine("public ValidationGenerator.Shared.ValidationResult GetValidationResult()");
         stringBuilder.AppendLine("{");
-        stringBuilder.AppendLine("    ValidationGenerator.Shared.ValidationResult result = new ValidationGenerator.Shared.ValidationResult();");
+        stringBuilder.AppendLine("    ValidationGenerator.Shared.ValidationResult result = new();");
         stringBuilder.AppendLine("    result.ValidationResults = new List<ValidationGenerator.Shared.PropertyValidationResult>();");
         stringBuilder.AppendLine($"   {validationResultSetSourceCode}");
         stringBuilder.AppendLine("    return result;");
@@ -40,12 +40,12 @@ public class ValidationResultMethodGenerator
 
     private (string methodsSourceCode, List<string> checkedProps) GeneratePrivatePropertyValidationMethods(List<PropertyValidationData> properties)
     {
-        StringBuilder result = new StringBuilder();
-        List<string> checkedProps = new List<string>();
+        StringBuilder result = new();
+        List<string> checkedProps = new();
 
         foreach (PropertyValidationData property in properties)
         {
-            StringBuilder ifChecksForProperty = new StringBuilder();
+            StringBuilder ifChecksForProperty = new();
 
             string fullTypeName = property.PropertyType.ToDisplayString(new SymbolDisplayFormat(
                 typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
@@ -163,7 +163,7 @@ public class ValidationResultMethodGenerator
     private static string GetPrivatePropertyValidationResultMethodSourceCode(string propertyName, string ifCheckForPropertySourceCode)
     {
         StringBuilder stringBuilder = new();
-        stringBuilder.AppendLine($"private ValidationGenerator.Shared.PropertyValidationResult Validate_{propertyName}()");
+        stringBuilder.AppendLine($"private ValidationGenerator.Shared.PropertyValidationResult? Validate_{propertyName}()");
         stringBuilder.AppendLine("{");
         stringBuilder.AppendLine("    ValidationGenerator.Shared.PropertyValidationResult result = new ValidationGenerator.Shared.PropertyValidationResult()");
         stringBuilder.AppendLine("    {");
