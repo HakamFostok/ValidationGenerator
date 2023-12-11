@@ -40,227 +40,46 @@ public class ValidationResultMethodGenerator
 
     private (string methodsSourceCode, List<string> checkedProps) GeneratePrivatePropertyValidationMethods(List<PropertyValidationData> properties)
     {
-        StringBuilder result = new();
-        List<string> checkedProps = new();
+        StringBuilder result = new StringBuilder();
+        List<string> checkedProps = new List<string>();
+
         foreach (PropertyValidationData property in properties)
         {
-            StringBuilder ifChecksForProperty = new();
+            StringBuilder ifChecksForProperty = new StringBuilder();
 
             string fullTypeName = property.PropertyType.ToDisplayString(new SymbolDisplayFormat(
                 typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
                 genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
                 miscellaneousOptions: SymbolDisplayMiscellaneousOptions.None));
 
+            if (!property.PropertyType.IsReferenceType)
+            {
+                // show diagnostic error
+                continue;
+            }
+
             foreach (var attributeValidation in property.AttributeValidationList)
             {
-                // String Validation Checks
                 if (fullTypeName.Equals(typeof(string).FullName, StringComparison.OrdinalIgnoreCase))
                 {
+                    var validationInfo = GetValidationInfo(attributeValidation, property);
 
-                    AttributeArgumentInfo errorMessageAttribute = attributeValidation.AttributeArguments.Find(x => x?.Name?.Equals(nameof(BaseValidationAttribute.ErrorMessage)) == true);
-                    string customErrorMessage = errorMessageAttribute is null ? string.Empty : errorMessageAttribute.Expression;
-                    string conditionSourceCode = string.Empty;
-                    string defaultErrorMessage = string.Empty;
-                    // NotNullGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(NotNullGeneratorAttribute)))
+                    string conditionSourceCode = validationInfo.condition;
+                    string defaultErrorMessage = validationInfo.defaultErrorMessage;
+
+                    string customErrorMessage = GetCustomErrorMessage(attributeValidation);
+                    string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
+
+                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+
+                    if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
-                        var validationInfo = StringValidation.GetNotNull(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                        ifChecksForProperty.AppendLine(ifCheckSourceCode);
+
+                        if (!checkedProps.Contains(property.PropertyName))
                         {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
+                            checkedProps.Add(property.PropertyName);
                         }
-                    }
-
-                    // EmailGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(EmailGeneratorAttribute)))
-                    {
-                        var validationInfo = StringValidation.GetValidEmail(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // NotEmptyGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(NotEmptyGeneratorAttribute)))
-                    {
-                        var validationInfo = StringValidation.GetNotEmpty(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // Base64GeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(Base64GeneratorAttribute)))
-                    {
-                        var validationInfo = StringValidation.GetValidBase64(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // MinimumLengthGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(MinimumLengthGeneratorAttribute)))
-                    {
-                        int minimumLength = 0;
-
-                        foreach (var attributeArgument in attributeValidation.AttributeArguments)
-                        {
-                            if (attributeArgument?.Name?.Equals(nameof(MinimumLengthGeneratorAttribute.MinimumLength)) == true)
-                            {
-                                minimumLength = Convert.ToInt32(attributeArgument.Expression);
-                            }
-                        }
-
-                        var validationInfo = StringValidation.GetMinimumLength(minimumLength, property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // MaximumLengthGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(MaximumLengthGeneratorAttribute)))
-                    {
-                        int maximumLength = 0;
-
-                        foreach (var attributeArgument in attributeValidation.AttributeArguments)
-                        {
-                            if (attributeArgument?.Name?.Equals(nameof(MaximumLengthGeneratorAttribute.MaximumLength)) == true)
-                            {
-                                maximumLength = Convert.ToInt32(attributeArgument.Expression);
-                            }
-                        }
-
-                        var validationInfo = StringValidation.GetMaximumLength(maximumLength, property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // RegexMatchGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(RegexMatchGeneratorAttribute)))
-                    {
-                        string regex = string.Empty;
-
-                        foreach (var attributeArgument in attributeValidation.AttributeArguments)
-                        {
-                            if (attributeArgument?.Name?.Equals(nameof(RegexMatchGeneratorAttribute.Regex)) == true)
-                            {
-                                regex = attributeArgument.Expression;
-                            }
-                        }
-
-                        var validationInfo = StringValidation.GetCustomRegex(regex, property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // AlphaNumericGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(AlphaNumericGeneratorAttribute)))
-                    {
-                        var validationInfo = StringValidation.GetAlphaNumeric(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
-                    }
-
-                    // SpecialCharacterGeneratorAttribute
-                    if (attributeValidation.AttributeName.Equals(nameof(SpecialCharacterGeneratorAttribute)))
-                    {
-                        var validationInfo = StringValidation.GetSpecialCharacter(property.PropertyName);
-                        conditionSourceCode = validationInfo.condition;
-                        defaultErrorMessage = validationInfo.defaultErrorMessage;
-                        string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
-                        string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
-                        if (!string.IsNullOrEmpty(ifCheckSourceCode))
-                        {
-                            ifChecksForProperty.AppendLine(ifCheckSourceCode);
-                            if (!checkedProps.Contains(property.PropertyName))
-                            {
-                                checkedProps.Add(property.PropertyName);
-                            }
-                        }
-
                     }
                 }
             }
@@ -268,7 +87,63 @@ public class ValidationResultMethodGenerator
             string methodSourceCode = GetPrivatePropertyValidationResultMethodSourceCode(property.PropertyName, ifChecksForProperty.ToString());
             result.AppendLine(methodSourceCode);
         }
+
         return (result.ToString(), checkedProps);
+    }
+
+    private (string condition, string defaultErrorMessage) GetValidationInfo(AttributeValidationData attributeValidation, PropertyValidationData property)
+    {
+        switch (attributeValidation.AttributeName)
+        {
+            case nameof(NotNullGeneratorAttribute):
+                return StringValidation.GetNotNull(property.PropertyName);
+
+            case nameof(EmailGeneratorAttribute):
+                return StringValidation.GetValidEmail(property.PropertyName);
+
+            case nameof(NotEmptyGeneratorAttribute):
+                return StringValidation.GetNotEmpty(property.PropertyName);
+
+            case nameof(Base64GeneratorAttribute):
+                return StringValidation.GetValidBase64(property.PropertyName);
+
+            case nameof(MinimumLengthGeneratorAttribute):
+                int minimumLength = GetAttributeValue<int>(attributeValidation, nameof(MinimumLengthGeneratorAttribute.MinimumLength));
+                return StringValidation.GetMinimumLength(minimumLength, property.PropertyName);
+
+            case nameof(MaximumLengthGeneratorAttribute):
+                int maximumLength = GetAttributeValue<int>(attributeValidation, nameof(MaximumLengthGeneratorAttribute.MaximumLength));
+                return StringValidation.GetMaximumLength(maximumLength, property.PropertyName);
+
+            case nameof(RegexMatchGeneratorAttribute):
+                string regex = GetAttributeValue<string>(attributeValidation, nameof(RegexMatchGeneratorAttribute.Regex));
+                return StringValidation.GetCustomRegex(regex, property.PropertyName);
+
+            case nameof(AlphaNumericGeneratorAttribute):
+                return StringValidation.GetAlphaNumeric(property.PropertyName);
+
+            case nameof(SpecialCharacterGeneratorAttribute):
+                return StringValidation.GetSpecialCharacter(property.PropertyName);
+
+            default:
+                return (string.Empty, string.Empty); // Handle unknown attribute types
+        }
+    }
+
+    private T GetAttributeValue<T>(AttributeValidationData attributeValidation, string attributeName)
+    {
+        var attributeArgument = attributeValidation.AttributeArguments.Find(arg => arg?.Name?.Equals(attributeName) == true);
+        if (attributeArgument != null && attributeArgument.Expression is T value)
+        {
+            return value;
+        }
+        return default;
+    }
+
+    private string GetCustomErrorMessage(AttributeValidationData attributeValidation)
+    {
+        var errorMessageAttribute = attributeValidation.AttributeArguments.Find(x => x?.Name?.Equals(nameof(BaseValidationAttribute.ErrorMessage)) == true);
+        return errorMessageAttribute?.Expression ?? string.Empty;
     }
 
     private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
