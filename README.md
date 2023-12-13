@@ -1,7 +1,6 @@
 # ValidationGenerator Library
 
 **Library Name:** ValidationGenerator
-**Stack:** .NET 6
 
 ## About
 
