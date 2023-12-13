@@ -22,13 +22,13 @@ To get started with ValidationGenerator, you'll need to decorate your classes an
 [ValidationGenerator] // Class attribute for validation generation
 public partial class Product
 {
-    [NotNull] // Not null check for property
+    [NotNullGenerator] // Not null check for property
     public string Id { get; set; }
 
-    [NotNull]
+    [NotNullGenerator]
     public string Name { get; set; }
 
-    [NotNull(ErrorMessage = "Product code cannot be null")]
+    [NotNullGenerator(ErrorMessage = "Product code cannot be null")]
     public string Code { get; set; }
 }
 ```
