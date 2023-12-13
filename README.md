@@ -1,4 +1,4 @@
-# ValidationGenerator Library
+# Validation Generator Library
 
 **Library Name:** ValidationGenerator
 
