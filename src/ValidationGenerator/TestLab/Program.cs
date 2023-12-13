@@ -1,9 +1,8 @@
 ﻿
 
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using TestLab;
-using ValidationGenerator.Shared;
+
 
 Console.WriteLine("Validation Generator");
 

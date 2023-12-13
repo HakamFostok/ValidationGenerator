@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="bin\Debug\net6.0\\ValidationGenerator.Core.dll" />
+    <None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Core.dll" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -20,8 +20,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Core.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Core.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Shared.dll" />
 		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Shared.dll" />
+		<None Remove="bin\Release\netstandard2.0\\ValidationGenerator.Shared.dll" />
 		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
 	</ItemGroup>
 

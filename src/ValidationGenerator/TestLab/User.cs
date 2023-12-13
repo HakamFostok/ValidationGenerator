@@ -49,6 +49,42 @@ public partial class User
     [SpecialCharacterGenerator]
     public string NonSpecialCharacter { get; set; } = "LOVE";
 
+    [GreaterThanZeroGenerator]
+    public int? Age { get; set; } = null;
+
+    [NotZeroGenerator]
+    public int LuckyNumber { get; set; } = 0;
+
+    [PositiveIntegerGenerator]
+    public int Minus { get; set; } = -1;
+
+    [NegativeIntegerGenerator]
+    public int ShouldBeMinus { get; set; } = 100;
+
+    [InRangeIntegerGenerator(Minimum = 20,Maximum =40)]
+    public int Score { get; set; } = 0;
+
+    [CustomValidationInteger(ValidationFunctionName = nameof(GreaterThanFive))]
+    public int IsValidValueForMe { get; set; } = 2;
+
+    [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger),ErrorMessage = "We could have had it all !!")]
+    public int RollingInTheDeep { get; set; } = -1000;
+
+
+    private bool GreaterThanFive(int value)
+    {
+        return value > 5;
+    }
+
+    private bool IsPositiveInteger(int value)
+    {
+        return value >= 0;
+    }
+
+
+
+
+
 
 
 }

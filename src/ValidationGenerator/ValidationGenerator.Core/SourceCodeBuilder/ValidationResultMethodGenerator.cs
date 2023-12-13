@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
+using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
 using ValidationGenerator.Shared;
 
 namespace ValidationGenerator.Core.SourceCodeBuilder;
@@ -52,11 +53,6 @@ public class ValidationResultMethodGenerator
                 genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
                 miscellaneousOptions: SymbolDisplayMiscellaneousOptions.None));
 
-            if (!property.PropertyType.IsReferenceType)
-            {
-                // show diagnostic error
-                continue;
-            }
 
             foreach (var attributeValidation in property.AttributeValidationList)
             {
@@ -82,6 +78,39 @@ public class ValidationResultMethodGenerator
                         }
                     }
                 }
+                else if (fullTypeName.Contains(typeof(short).FullName) ||
+                         fullTypeName.Contains(typeof(int).FullName) ||
+                         fullTypeName.Contains(typeof(long).FullName))
+                {
+                    if (property.PropertyName == "Age")
+                    {
+                        ;
+                    }
+
+                    var validationInfo = GetValidationInfo(attributeValidation, property, fullTypeName.Contains("?"));
+
+                    string conditionSourceCode = validationInfo.condition;
+                    string defaultErrorMessage = validationInfo.defaultErrorMessage;
+
+                    string customErrorMessage = GetCustomErrorMessage(attributeValidation);
+                    string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
+
+                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+
+                    if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                    {
+                        ifChecksForProperty.AppendLine(ifCheckSourceCode);
+
+                        if (!checkedProps.Contains(property.PropertyName))
+                        {
+                            checkedProps.Add(property.PropertyName);
+                        }
+                    }
+                }
+                else
+                {
+                    ;
+                }
             }
 
             string methodSourceCode = GetPrivatePropertyValidationResultMethodSourceCode(property.PropertyName, ifChecksForProperty.ToString());
@@ -91,7 +120,10 @@ public class ValidationResultMethodGenerator
         return (result.ToString(), checkedProps);
     }
 
-    private (string condition, string defaultErrorMessage) GetValidationInfo(AttributeValidationData attributeValidation, PropertyValidationData property)
+    private (string condition, string defaultErrorMessage) GetValidationInfo(
+        AttributeValidationData attributeValidation,
+        PropertyValidationData property,
+        bool isNullable = false)
     {
         switch (attributeValidation.AttributeName)
         {
@@ -125,19 +157,59 @@ public class ValidationResultMethodGenerator
             case nameof(SpecialCharacterGeneratorAttribute):
                 return StringValidation.GetSpecialCharacter(property.PropertyName);
 
+            // Integer && Integer?
+            case nameof(NotZeroGeneratorAttribute):
+                return IntegerValidation.GetNotZero(property.PropertyName, isNullable);
+
+            case nameof(GreaterThanZeroGeneratorAttribute):
+                return IntegerValidation.GetGreaterThanZero(property.PropertyName, isNullable);
+
+            case nameof(LowerThanZeroGeneratorAttribute):
+                return IntegerValidation.GetLowerThanZero(property.PropertyName, isNullable);
+
+            case nameof(PositiveIntegerGeneratorAttribute):
+                return IntegerValidation.GetPositive(property.PropertyName, isNullable);
+
+            case nameof(NegativeIntegerGeneratorAttribute):
+                return IntegerValidation.GetNegative(property.PropertyName, isNullable);
+
+            case nameof(InRangeIntegerGeneratorAttribute):
+                int minimum = GetAttributeValue<int>(attributeValidation, nameof(InRangeIntegerGeneratorAttribute.Minimum));
+                int maximum = GetAttributeValue<int>(attributeValidation, nameof(InRangeIntegerGeneratorAttribute.Maximum));
+                return IntegerValidation.GetInRange(minimum, maximum, property.PropertyName, isNullable);
+
+            case nameof(CustomValidationIntegerAttribute):
+                string functionName = GetAttributeValue<string>(attributeValidation, nameof(CustomValidationIntegerAttribute.ValidationFunctionName));
+                return IntegerValidation.GetCustomValidation(functionName, property.PropertyName);
+
             default:
-                return (string.Empty, string.Empty); // Handle unknown attribute types
+                return (string.Empty, string.Empty);
         }
     }
 
     private T GetAttributeValue<T>(AttributeValidationData attributeValidation, string attributeName)
     {
         var attributeArgument = attributeValidation.AttributeArguments.Find(arg => arg?.Name?.Equals(attributeName) == true);
-        if (attributeArgument != null && attributeArgument.Expression is T value)
+        if (attributeArgument is null)
         {
-            return value;
+            return default;
         }
-        return default;
+        try
+        {
+            return (T)Convert.ChangeType(attributeArgument.Expression, typeof(T));
+        }
+        catch (InvalidCastException)
+        {
+            throw new InvalidCastException($"Cannot convert {attributeArgument.Expression.GetType().FullName} to {typeof(T).FullName}");
+        }
+        catch (FormatException)
+        {
+            throw new FormatException($"Invalid format for {typeof(T).FullName}");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"An error occurred during the conversion: {ex.Message}", ex);
+        }
     }
 
     private string GetCustomErrorMessage(AttributeValidationData attributeValidation)
