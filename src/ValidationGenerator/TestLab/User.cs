@@ -28,7 +28,7 @@ public partial class User
     [Base64Generator]
     public string InvalidBase64 { get; set; } = "123!23rqsdcasdc asf asdfas 3!'''''+!32 adf.,asdf ";
 
-    [MinimumLengthGenerator(MinimumLength =20)]
+    [MinimumLengthGenerator(MinimumLength = 20)]
     public string RockBandName { get; set; } = "The Metalica";
 
     [MaximumLengthGenerator(MaximumLength = 10)]
@@ -61,13 +61,13 @@ public partial class User
     [NegativeIntegerGenerator]
     public int ShouldBeMinus { get; set; } = 100;
 
-    [InRangeIntegerGenerator(Minimum = 20,Maximum =40)]
+    [InRangeIntegerGenerator(Minimum = 20, Maximum = 40)]
     public int Score { get; set; } = 0;
 
     [CustomValidationInteger(ValidationFunctionName = nameof(GreaterThanFive))]
     public int IsValidValueForMe { get; set; } = 2;
 
-    [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger),ErrorMessage = "We could have had it all !!")]
+    [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger), ErrorMessage = "We could have had it all !!")]
     public int RollingInTheDeep { get; set; } = -1000;
 
 

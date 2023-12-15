@@ -11,13 +11,13 @@ public class BaseValidationAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class NotEmptyGeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class NotNullGeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -35,7 +35,7 @@ public sealed class MaximumLengthGeneratorAttribute : BaseValidationAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class Base64GeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]

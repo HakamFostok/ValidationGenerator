@@ -41,8 +41,8 @@ public class ValidationGenerator : IIncrementalGenerator
     }
 
     private static void Execute(
-        Compilation compilation, 
-        ImmutableArray<ClassDeclarationSyntax> classes, 
+        Compilation compilation,
+        ImmutableArray<ClassDeclarationSyntax> classes,
         SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty)
@@ -61,10 +61,10 @@ public class ValidationGenerator : IIncrementalGenerator
         }
         catch (Exception)
         {
-           
+
             throw;
         }
-       
+
     }
 
     private static List<ClassValidationData> GetTypesToGenerate(
@@ -88,7 +88,7 @@ public class ValidationGenerator : IIncrementalGenerator
                 continue;
             }
 
-            
+
 
 
             ClassValidationData classValidationData = new()
@@ -139,10 +139,10 @@ public class ValidationGenerator : IIncrementalGenerator
             {
                 //Type type = property.Type.OriginalDefinition.;
 
-               
+
                 var attributes = property.GetAttributes();
 
-                
+
                 List<AttributeValidationData> attributesValidationData = new();
 
                 foreach (var attribute in attributes)
@@ -172,7 +172,7 @@ public class ValidationGenerator : IIncrementalGenerator
                 }
                 classValidationData.PropertyValidationList.Add(new()
                 {
-                    PropertyName = property.Name,    
+                    PropertyName = property.Name,
                     PropertyType = property.Type,
                     AttributeValidationList = attributesValidationData
                 });

@@ -1,0 +1,26 @@
+<Project>
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AnalysisLevel>latest-All</AnalysisLevel>
+		<!--<NoWarn>CA1014;CA2007;CA1812;CA1031;IDE0022;IDE0053;S1125</NoWarn>-->
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<!--<PublishTrimmed>true</PublishTrimmed>-->
+		<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+	</PropertyGroup>
+
+	<!-- https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-restore#audit-for-security-vulnerabilities -->
+	<!-- https://learn.microsoft.com/en-us/nuget/concepts/auditing-packages -->
+	<PropertyGroup>
+		<NuGetAudit>true</NuGetAudit>
+		<NuGetAuditMode>all</NuGetAuditMode>
+		<NuGetAuditLevel>moderate</NuGetAuditLevel>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<Product>Validation Generator</Product>
+		<Copyright>© All Rights Reserved</Copyright>
+	</PropertyGroup>
+
+</Project>

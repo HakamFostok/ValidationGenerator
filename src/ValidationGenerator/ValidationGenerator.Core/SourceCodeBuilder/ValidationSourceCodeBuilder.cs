@@ -89,11 +89,11 @@ public class ClassValidationData
                     {
                         var diagnostic = Diagnostic.Create(
                         new DiagnosticDescriptor(
-                            "VGGEN001", 
-                            "Invalid Attribute Usage", 
-                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.PropertyName} ", 
-                            "Source Generator", 
-                            DiagnosticSeverity.Error, 
+                            "VGGEN001",
+                            "Invalid Attribute Usage",
+                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.PropertyName} ",
+                            "Source Generator",
+                            DiagnosticSeverity.Error,
                             true),
                         Location.None);
                         SourceProductionContext.ReportDiagnostic(diagnostic);
