@@ -1,9 +1,11 @@
-﻿
-using ValidationGenerator.Shared;
+﻿using ValidationGenerator.Shared;
 
 namespace TestLab;
 
-[ValidationGenerator(GenerateThrowIfNotValid = false, GenerateIsValidProperty = true, GenerateValidationResult = true)]
+[ValidationGenerator(
+    GenerateThrowIfNotValid = false,
+    GenerateIsValidProperty = true,
+    GenerateValidationResult = true)]
 public partial class User
 {
     [NotNullGenerator(ErrorMessage = "User Id cannot be null")]
@@ -70,7 +72,6 @@ public partial class User
     [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger), ErrorMessage = "We could have had it all !!")]
     public int RollingInTheDeep { get; set; } = -1000;
 
-
     private bool GreaterThanFive(int value)
     {
         return value > 5;
@@ -81,12 +82,4 @@ public partial class User
         return value >= 0;
     }
 
-
-
-
-
-
-
 }
-
-

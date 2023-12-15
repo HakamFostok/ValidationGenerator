@@ -6,7 +6,6 @@ public class ValidationResult
     public List<PropertyValidationResult> ValidationResults { get; set; } = new();
 }
 
-
 public class PropertyValidationResult
 {
     public string PropertyName { get; set; } = string.Empty;

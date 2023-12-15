@@ -121,8 +121,6 @@ public class ClassValidationData
                 codeBuilder.AppendLine($"                {exceptionBlock};");
                 codeBuilder.AppendLine("            }");
                 codeBuilder.AppendLine();
-
-
             }
 
         }

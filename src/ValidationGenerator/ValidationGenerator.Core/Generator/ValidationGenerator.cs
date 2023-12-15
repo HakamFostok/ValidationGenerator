@@ -1,10 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ValidationGenerator.Core.SourceCodeBuilder;
+using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Text;
+using ValidationGenerator.Core.SourceCodeBuilder;
 
 namespace ValidationGenerator.Core;
 
@@ -62,9 +62,9 @@ public class ValidationGenerator : IIncrementalGenerator
     }
 
     private static List<ClassValidationData> GetTypesToGenerate(
-    Compilation compilation,
-    IEnumerable<ClassDeclarationSyntax> classes,
-    CancellationToken ct)
+        Compilation compilation,
+        IEnumerable<ClassDeclarationSyntax> classes,
+        CancellationToken ct)
     {
         List<ClassValidationData> classesToGenerate = new();
         INamedTypeSymbol validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
@@ -77,7 +77,7 @@ public class ValidationGenerator : IIncrementalGenerator
             ct.ThrowIfCancellationRequested();
 
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
+            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax, ct) is not INamedTypeSymbol classSymbol)
             {
                 continue;
             }
