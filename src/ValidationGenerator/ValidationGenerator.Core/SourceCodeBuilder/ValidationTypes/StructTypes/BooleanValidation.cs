@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
 
 internal static class BooleanValidation
 {

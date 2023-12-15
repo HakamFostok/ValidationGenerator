@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ValidationGenerator.Shared;
-
+﻿namespace ValidationGenerator.Shared;
 
 public class ValidationResult
 {

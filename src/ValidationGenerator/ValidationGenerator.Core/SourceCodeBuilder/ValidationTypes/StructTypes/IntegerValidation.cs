@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
 internal static class IntegerValidation
 {
     public static (string condition, string defaultErrorMessage) GetNotZero(string propertyName, bool nullable = false)

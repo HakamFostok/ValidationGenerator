@@ -1,7 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
 using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;

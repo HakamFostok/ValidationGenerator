@@ -1,7 +1,4 @@
-﻿using System;
-
-namespace ValidationGenerator.Shared;
-
+﻿namespace ValidationGenerator.Shared;
 
 public class BaseValidationAttribute : Attribute
 {
@@ -105,6 +102,3 @@ public sealed class CustomValidationIntegerAttribute : BaseValidationAttribute
 {
     public string ValidationFunctionName { get; set; }
 }
-
-
-
