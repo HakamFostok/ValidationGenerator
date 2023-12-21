@@ -6,6 +6,11 @@ using TestLab;
 
 Console.WriteLine("Validation Generator");
 
+JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
+{
+    WriteIndented = true
+};
+
 try
 {
     User user = new()
@@ -15,10 +20,7 @@ try
     };
     var result = user.GetValidationResult();
 
-    Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions()
-    {
-        WriteIndented = true
-    }));
+    Console.WriteLine(JsonSerializer.Serialize(result, jsonSerializerOptions));
 }
 catch (Exception)
 {
