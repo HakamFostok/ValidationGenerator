@@ -42,10 +42,10 @@ public class CustomerValidator : AbstractValidator<Customer_Fluent>
 [ValidationGenerator(GenerateValidationResult = true, GenerateThrowIfNotValid = false, GenerateIsValidProperty = false)]
 public partial class Customer_Generator
 {
-    [NotEmptyGenerator]
+    [MustNotEmptyGenerator]
     public string Id { get; set; } = "0ecde2d9-e0e7-4e9e-9bef-e3ccd10586e7";
 
-    [NotNullGenerator]
+    [MustNotNullGenerator]
     public string FirstName { get; set; } = null;
 
     [MinimumLengthGenerator(MinimumLength = 8, ErrorMessage = "Minimum length is 3")]

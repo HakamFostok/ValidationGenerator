@@ -83,7 +83,7 @@ public class ClassValidationData
                 string ifCondition = $"if ({property.PropertyName} @@Expression@@)";
                 string exceptionBlock = "throw new @@Exception@@(@@errorMessage@@)";
 
-                if (attributeValidation.AttributeName.Equals(nameof(NotNullGeneratorAttribute)))
+                if (attributeValidation.AttributeName.Equals(nameof(MustNotNullGeneratorAttribute)))
                 {
                     if (!property.PropertyType.IsReferenceType)
                     {
@@ -104,7 +104,7 @@ public class ClassValidationData
 
                     foreach (var attributeArgument in attributeValidation.AttributeArguments)
                     {
-                        if (attributeArgument?.Name?.Equals(nameof(NotNullGeneratorAttribute.ErrorMessage)) == true)
+                        if (attributeArgument?.Name?.Equals(nameof(MustNotNullGeneratorAttribute.ErrorMessage)) == true)
                         {
                             exceptionBlock = exceptionBlock.Replace("@@errorMessage@@", $"\"{attributeArgument.Expression}\"");
                         }

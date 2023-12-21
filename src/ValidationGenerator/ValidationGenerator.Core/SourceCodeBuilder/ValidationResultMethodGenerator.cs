@@ -127,16 +127,16 @@ public class ValidationResultMethodGenerator
     {
         switch (attributeValidation.AttributeName)
         {
-            case nameof(NotNullGeneratorAttribute):
+            case nameof(MustNotNullGeneratorAttribute):
                 return StringValidation.GetNotNull(property.PropertyName);
 
-            case nameof(EmailGeneratorAttribute):
+            case nameof(MustValidEmailGeneratorAttribute):
                 return StringValidation.GetValidEmail(property.PropertyName);
 
-            case nameof(NotEmptyGeneratorAttribute):
+            case nameof(MustNotEmptyGeneratorAttribute):
                 return StringValidation.GetNotEmpty(property.PropertyName);
 
-            case nameof(Base64GeneratorAttribute):
+            case nameof(MustValidBase64GeneratorAttribute):
                 return StringValidation.GetValidBase64(property.PropertyName);
 
             case nameof(MinimumLengthGeneratorAttribute):
@@ -151,31 +151,31 @@ public class ValidationResultMethodGenerator
                 string regex = GetAttributeValue<string>(attributeValidation, nameof(RegexMatchGeneratorAttribute.Regex));
                 return StringValidation.GetCustomRegex(regex, property.PropertyName);
 
-            case nameof(AlphaNumericGeneratorAttribute):
+            case nameof(MustValidAlphaNumericGeneratorAttribute):
                 return StringValidation.GetAlphaNumeric(property.PropertyName);
 
-            case nameof(SpecialCharacterGeneratorAttribute):
+            case nameof(MustContainSpecialCharacterGeneratorAttribute):
                 return StringValidation.GetSpecialCharacter(property.PropertyName);
 
             // Integer && Integer?
-            case nameof(NotZeroGeneratorAttribute):
+            case nameof(MustNotBeZeroGeneratorAttribute):
                 return IntegerValidation.GetNotZero(property.PropertyName, isNullable);
 
-            case nameof(GreaterThanZeroGeneratorAttribute):
+            case nameof(MustBeGreaterThanZeroGeneratorAttribute):
                 return IntegerValidation.GetGreaterThanZero(property.PropertyName, isNullable);
 
-            case nameof(LowerThanZeroGeneratorAttribute):
+            case nameof(MustBeLowerThanZeroGeneratorAttribute):
                 return IntegerValidation.GetLowerThanZero(property.PropertyName, isNullable);
 
-            case nameof(PositiveIntegerGeneratorAttribute):
+            case nameof(MustBePositiveIntegerGeneratorAttribute):
                 return IntegerValidation.GetPositive(property.PropertyName, isNullable);
 
-            case nameof(NegativeIntegerGeneratorAttribute):
+            case nameof(MustBeNegativeIntegerGeneratorAttribute):
                 return IntegerValidation.GetNegative(property.PropertyName, isNullable);
 
-            case nameof(InRangeIntegerGeneratorAttribute):
-                int minimum = GetAttributeValue<int>(attributeValidation, nameof(InRangeIntegerGeneratorAttribute.Minimum));
-                int maximum = GetAttributeValue<int>(attributeValidation, nameof(InRangeIntegerGeneratorAttribute.Maximum));
+            case nameof(MustBeInRangeIntegerGeneratorAttribute):
+                int minimum = GetAttributeValue<int>(attributeValidation, nameof(MustBeInRangeIntegerGeneratorAttribute.Minimum));
+                int maximum = GetAttributeValue<int>(attributeValidation, nameof(MustBeInRangeIntegerGeneratorAttribute.Maximum));
                 return IntegerValidation.GetInRange(minimum, maximum, property.PropertyName, isNullable);
 
             case nameof(CustomValidationIntegerAttribute):

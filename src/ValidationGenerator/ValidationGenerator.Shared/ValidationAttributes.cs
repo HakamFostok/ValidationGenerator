@@ -9,13 +9,13 @@ public class BaseValidationAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NotEmptyGeneratorAttribute : BaseValidationAttribute
+public sealed class MustNotEmptyGeneratorAttribute : BaseValidationAttribute
 {
     
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NotNullGeneratorAttribute : BaseValidationAttribute
+public sealed class MustNotNullGeneratorAttribute : BaseValidationAttribute
 {
     
 }
@@ -33,25 +33,25 @@ public sealed class MaximumLengthGeneratorAttribute : BaseValidationAttribute
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class Base64GeneratorAttribute : BaseValidationAttribute
+public sealed class MustValidBase64GeneratorAttribute : BaseValidationAttribute
 {
     
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class EmailGeneratorAttribute : BaseValidationAttribute
+public sealed class MustValidEmailGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class AlphaNumericGeneratorAttribute : BaseValidationAttribute
+public sealed class MustValidAlphaNumericGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class SpecialCharacterGeneratorAttribute : BaseValidationAttribute
+public sealed class MustContainSpecialCharacterGeneratorAttribute : BaseValidationAttribute
 {
 
 }
@@ -63,44 +63,44 @@ public sealed class RegexMatchGeneratorAttribute : BaseValidationAttribute
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NotZeroGeneratorAttribute : BaseValidationAttribute
+public sealed class MustNotBeZeroGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class GreaterThanZeroGeneratorAttribute : BaseValidationAttribute
+public sealed class MustBeGreaterThanZeroGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class LowerThanZeroGeneratorAttribute : BaseValidationAttribute
+public sealed class MustBeLowerThanZeroGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class PositiveIntegerGeneratorAttribute : BaseValidationAttribute
+public sealed class MustBePositiveIntegerGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class NegativeIntegerGeneratorAttribute : BaseValidationAttribute
+public sealed class MustBeNegativeIntegerGeneratorAttribute : BaseValidationAttribute
 {
 
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class InRangeIntegerGeneratorAttribute : BaseValidationAttribute
+public sealed class MustBeInRangeIntegerGeneratorAttribute : BaseValidationAttribute
 {
     public int Minimum { get; set; }
     public int Maximum { get; set; }
 }
 
-
+[AttributeUsage(AttributeTargets.Property)]
 public sealed class CustomValidationIntegerAttribute : BaseValidationAttribute
 {
     public string ValidationFunctionName { get; set; }

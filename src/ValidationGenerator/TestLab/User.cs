@@ -6,26 +6,26 @@ namespace TestLab;
 [ValidationGenerator(GenerateThrowIfNotValid = false, GenerateIsValidProperty = true, GenerateValidationResult = true)]
 public partial class User
 {
-    [NotNullGenerator(ErrorMessage = "User Id cannot be null")]
+    [MustNotNullGenerator(ErrorMessage = "User Id cannot be null")]
     public string? Id { get; set; }
 
-    [NotNullGenerator(ErrorMessage = "User Name cannot be null")]
+    [MustNotNullGenerator(ErrorMessage = "User Name cannot be null")]
     public string? Name { get; set; }
 
-    [EmailGenerator]
+    [MustValidEmailGenerator]
     public string Email { get; set; } = "textX";
 
-    [EmailGenerator]
+    [MustValidEmailGenerator]
     public string Email2 { get; set; } = "emirhan.aksoy@everi.com";
 
-    [NotEmptyGenerator(ErrorMessage = "THIS IS EMPTY !!")]
-    [EmailGenerator(ErrorMessage = "THIS IS EMPTY AND NOT A VALID EMAIL")]
+    [MustNotEmptyGenerator(ErrorMessage = "THIS IS EMPTY !!")]
+    [MustValidEmailGenerator(ErrorMessage = "THIS IS EMPTY AND NOT A VALID EMAIL")]
     public string AdditionalEmail { get; set; } = "";
 
-    [Base64Generator]
+    [MustValidBase64Generator]
     public string HelloWorldBase64 { get; set; } = "SGVsbG8gd29ybGQgIQ==";
 
-    [Base64Generator]
+    [MustValidBase64Generator]
     public string InvalidBase64 { get; set; } = "123!23rqsdcasdc asf asdfas 3!'''''+!32 adf.,asdf ";
 
     [MinimumLengthGenerator(MinimumLength =20)]
@@ -37,31 +37,31 @@ public partial class User
     [RegexMatchGenerator(Regex = "\b[A-Z][a-zA-Z]*\b", ErrorMessage = "Should starts with upper case !!")]
     public string xTwitter { get; set; } = "xTwitter";
 
-    [AlphaNumericGenerator]
+    [MustValidAlphaNumericGenerator]
     public string NonAlphaNumeric { get; set; } = "K7eR3vP9_$%";
 
-    [AlphaNumericGenerator]
+    [MustValidAlphaNumericGenerator]
     public string AlphaNumeric { get; set; } = "K7eR3vP9";
 
-    [SpecialCharacterGenerator]
+    [MustContainSpecialCharacterGenerator]
     public string SpecialCharacter { get; set; } = "@#$%^&*()";
 
-    [SpecialCharacterGenerator]
+    [MustContainSpecialCharacterGenerator]
     public string NonSpecialCharacter { get; set; } = "LOVE";
 
-    [GreaterThanZeroGenerator]
+    [MustBeGreaterThanZeroGenerator]
     public int? Age { get; set; } = null;
 
-    [NotZeroGenerator]
+    [MustNotBeZeroGenerator]
     public int LuckyNumber { get; set; } = 0;
 
-    [PositiveIntegerGenerator]
+    [MustBePositiveIntegerGenerator]
     public int Minus { get; set; } = -1;
 
-    [NegativeIntegerGenerator]
+    [MustBeNegativeIntegerGenerator]
     public int ShouldBeMinus { get; set; } = 100;
 
-    [InRangeIntegerGenerator(Minimum = 20,Maximum =40)]
+    [MustBeInRangeIntegerGenerator(Minimum = 20,Maximum =40)]
     public int Score { get; set; } = 0;
 
     [CustomValidationInteger(ValidationFunctionName = nameof(GreaterThanFive))]
