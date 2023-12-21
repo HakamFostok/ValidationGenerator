@@ -1,8 +1,6 @@
-﻿
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder;
 
-namespace ValidationGenerator.Core.SourceCodeBuilder;
-
-public enum  ValidationConditionTypes
+public enum ValidationConditionTypes
 {
     IsNull
 }

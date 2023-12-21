@@ -1,7 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ValidationGenerator.Shared;
 
@@ -89,11 +86,11 @@ public class ClassValidationData
                     {
                         var diagnostic = Diagnostic.Create(
                         new DiagnosticDescriptor(
-                            "VGGEN001", 
-                            "Invalid Attribute Usage", 
-                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.PropertyName} ", 
-                            "Source Generator", 
-                            DiagnosticSeverity.Error, 
+                            "VGGEN001",
+                            "Invalid Attribute Usage",
+                            $"NotNullGeneratorAttribute is only applicable to reference types, please remove NotNullGeneratorAttribute from {property.PropertyName} ",
+                            "Source Generator",
+                            DiagnosticSeverity.Error,
                             true),
                         Location.None);
                         SourceProductionContext.ReportDiagnostic(diagnostic);
@@ -124,8 +121,6 @@ public class ClassValidationData
                 codeBuilder.AppendLine($"                {exceptionBlock};");
                 codeBuilder.AppendLine("            }");
                 codeBuilder.AppendLine();
-
-
             }
 
         }

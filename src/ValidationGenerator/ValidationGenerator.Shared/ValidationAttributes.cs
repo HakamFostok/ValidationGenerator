@@ -1,7 +1,4 @@
-﻿using System;
-
-namespace ValidationGenerator.Shared;
-
+﻿namespace ValidationGenerator.Shared;
 
 public class BaseValidationAttribute : Attribute
 {
@@ -11,13 +8,13 @@ public class BaseValidationAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotEmptyGeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotNullGeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -35,7 +32,7 @@ public sealed class MaximumLengthGeneratorAttribute : BaseValidationAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustValidBase64GeneratorAttribute : BaseValidationAttribute
 {
-    
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -105,6 +102,3 @@ public sealed class CustomValidationIntegerAttribute : BaseValidationAttribute
 {
     public string ValidationFunctionName { get; set; }
 }
-
-
-

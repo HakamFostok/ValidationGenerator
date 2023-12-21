@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ValidationGenerator.Shared;
-
+﻿namespace ValidationGenerator.Shared;
 
 public class ValidationResult
 {
@@ -9,10 +6,9 @@ public class ValidationResult
     public List<PropertyValidationResult> ValidationResults { get; set; } = new();
 }
 
-
 public class PropertyValidationResult
 {
-    public string PropertyName { get; set; }   = string.Empty;
+    public string PropertyName { get; set; } = string.Empty;
     public object Value { get; set; } = null;
     public List<string> ErrorMessages { get; set; } = new();
 }

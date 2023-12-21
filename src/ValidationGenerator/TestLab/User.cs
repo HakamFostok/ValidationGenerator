@@ -1,9 +1,11 @@
-﻿
-using ValidationGenerator.Shared;
+﻿using ValidationGenerator.Shared;
 
 namespace TestLab;
 
-[ValidationGenerator(GenerateThrowIfNotValid = false, GenerateIsValidProperty = true, GenerateValidationResult = true)]
+[ValidationGenerator(
+    GenerateThrowIfNotValid = false,
+    GenerateIsValidProperty = true,
+    GenerateValidationResult = true)]
 public partial class User
 {
     [MustNotNullGenerator(ErrorMessage = "User Id cannot be null")]
@@ -28,7 +30,7 @@ public partial class User
     [MustValidBase64Generator]
     public string InvalidBase64 { get; set; } = "123!23rqsdcasdc asf asdfas 3!'''''+!32 adf.,asdf ";
 
-    [MinimumLengthGenerator(MinimumLength =20)]
+    [MinimumLengthGenerator(MinimumLength = 20)]
     public string RockBandName { get; set; } = "The Metalica";
 
     [MaximumLengthGenerator(MaximumLength = 10)]
@@ -67,9 +69,8 @@ public partial class User
     [CustomValidationInteger(ValidationFunctionName = nameof(GreaterThanFive))]
     public int IsValidValueForMe { get; set; } = 2;
 
-    [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger),ErrorMessage = "We could have had it all !!")]
+    [CustomValidationInteger(ValidationFunctionName = nameof(IsPositiveInteger), ErrorMessage = "We could have had it all !!")]
     public int RollingInTheDeep { get; set; } = -1000;
-
 
     private bool GreaterThanFive(int value)
     {
@@ -81,12 +82,4 @@ public partial class User
         return value >= 0;
     }
 
-
-
-
-
-
-
 }
-
-

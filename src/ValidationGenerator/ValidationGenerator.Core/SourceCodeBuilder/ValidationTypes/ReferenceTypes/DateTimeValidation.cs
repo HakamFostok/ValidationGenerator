@@ -1,5 +1,4 @@
-﻿using System;
-namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
 
 internal static class DateTimeValidation
 {

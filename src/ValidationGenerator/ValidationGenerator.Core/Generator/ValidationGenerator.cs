@@ -1,14 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using ValidationGenerator.Core.SourceCodeBuilder;
+using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
-using System.Threading;
 using System.Diagnostics;
-using System;
+using System.Text;
+using ValidationGenerator.Core.SourceCodeBuilder;
 
 namespace ValidationGenerator.Core;
 
@@ -41,8 +37,8 @@ public class ValidationGenerator : IIncrementalGenerator
     }
 
     private static void Execute(
-        Compilation compilation, 
-        ImmutableArray<ClassDeclarationSyntax> classes, 
+        Compilation compilation,
+        ImmutableArray<ClassDeclarationSyntax> classes,
         SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty)
@@ -61,16 +57,14 @@ public class ValidationGenerator : IIncrementalGenerator
         }
         catch (Exception)
         {
-           
             throw;
         }
-       
     }
 
     private static List<ClassValidationData> GetTypesToGenerate(
-    Compilation compilation,
-    IEnumerable<ClassDeclarationSyntax> classes,
-    CancellationToken ct)
+        Compilation compilation,
+        IEnumerable<ClassDeclarationSyntax> classes,
+        CancellationToken ct)
     {
         List<ClassValidationData> classesToGenerate = new();
         INamedTypeSymbol validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
@@ -83,13 +77,10 @@ public class ValidationGenerator : IIncrementalGenerator
             ct.ThrowIfCancellationRequested();
 
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
+            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax, ct) is not INamedTypeSymbol classSymbol)
             {
                 continue;
             }
-
-            
-
 
             ClassValidationData classValidationData = new()
             {
@@ -139,10 +130,8 @@ public class ValidationGenerator : IIncrementalGenerator
             {
                 //Type type = property.Type.OriginalDefinition.;
 
-               
                 var attributes = property.GetAttributes();
 
-                
                 List<AttributeValidationData> attributesValidationData = new();
 
                 foreach (var attribute in attributes)
@@ -172,7 +161,7 @@ public class ValidationGenerator : IIncrementalGenerator
                 }
                 classValidationData.PropertyValidationList.Add(new()
                 {
-                    PropertyName = property.Name,    
+                    PropertyName = property.Name,
                     PropertyType = property.Type,
                     AttributeValidationList = attributesValidationData
                 });
@@ -185,7 +174,8 @@ public class ValidationGenerator : IIncrementalGenerator
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
-    node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
+        node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
+    
     private static ClassDeclarationSyntax GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         ClassDeclarationSyntax classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
@@ -208,7 +198,5 @@ public class ValidationGenerator : IIncrementalGenerator
         }
         return null;
     }
-
-
 }
 

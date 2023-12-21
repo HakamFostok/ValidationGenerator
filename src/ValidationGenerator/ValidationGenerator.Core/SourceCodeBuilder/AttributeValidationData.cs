@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-
-
-namespace ValidationGenerator.Core.SourceCodeBuilder;
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder;
 
 public class AttributeValidationData
 {
