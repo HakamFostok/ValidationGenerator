@@ -1,6 +1,6 @@
 ﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
 
-internal static class StringValidation
+internal class StringValidation
 {
     public static (string condition, string defaultErrorMessage) GetNotNull(string propertyName)
     {
@@ -13,6 +13,15 @@ internal static class StringValidation
     {
         string condition = $"string.IsNullOrWhiteSpace({propertyName})";
         string errorMessage = $"{propertyName} cannot be empty";
+        return (condition, errorMessage);
+    }
+
+    public static (string condition, string defaultErrorMessage) GetCustomValidationFunction(string functionName, string propertyName, bool isAsync)
+    {
+        if (string.IsNullOrEmpty(functionName))
+            return (string.Empty, string.Empty);
+        string condition = isAsync ? "await" : string.Empty + $" !this.{functionName}({propertyName})";
+        string errorMessage = $"{propertyName} does not satisfy the custom validation criteria";
         return (condition, errorMessage);
     }
 

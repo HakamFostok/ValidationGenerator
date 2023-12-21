@@ -1,25 +1,45 @@
-﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
+﻿
 
-internal static class BooleanValidation
+namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
+
+internal static class BooleanValidation 
 {
-    public static (string condition, string defaultErrorMessage) GetTrue(string propertyName)
+    public static  (string condition, string defaultErrorMessage) GetNotNull(string propertyName, bool isNullable)
     {
-        string condition = $"!{propertyName}";
+        if(!isNullable)
+            return (string.Empty, string.Empty);
+
+        string condition = $"{propertyName} is null";
+        string errorMessage = $"{propertyName} cannot be null";
+        return (condition, errorMessage);
+    }
+
+    public static  (string condition, string defaultErrorMessage) GetNotEmpty(string propertyName, bool isNullable)
+    {
+        string condition = isNullable ? $"{propertyName}.HasValue && !{propertyName}.Value" : $"!{propertyName}";
         string errorMessage = $"{propertyName} should be true";
         return (condition, errorMessage);
     }
 
-    public static (string condition, string defaultErrorMessage) GetFalse(string propertyName)
+    public static  (string condition, string defaultErrorMessage) GetCustomValidationFunction(string functionName, string propertyName, bool isAsync)
     {
-        string condition = $"{propertyName}";
-        string errorMessage = $"{propertyName} should be false";
+        if (string.IsNullOrEmpty(functionName))
+            return (string.Empty, string.Empty);
+        string condition = isAsync ? "await" : string.Empty + $" !this.{functionName}({propertyName})";
+        string errorMessage = $"{propertyName} does not satisfy the custom validation criteria";
+        return (condition, errorMessage);
+    }
+    public static (string condition, string defaultErrorMessage) GetTrue(string propertyName,bool isNullable)
+    {
+        string condition = isNullable ? $"{propertyName}.HasValue && !{propertyName}.Value" : $"!{propertyName}";
+        string errorMessage = $"{propertyName} should be true";
         return (condition, errorMessage);
     }
 
-    public static (string condition, string defaultErrorMessage) GetCustomValidation(Func<bool, bool> validationFunc, string propertyName)
+    public static (string condition, string defaultErrorMessage) GetFalse(string propertyName, bool isNullable)
     {
-        string condition = $"!({validationFunc.Method.Name}({propertyName}))";
-        string errorMessage = $"{propertyName} does not satisfy the custom validation criteria";
+        string condition = isNullable ? $"{propertyName}.HasValue && {propertyName}.Value" : $"{propertyName}";
+        string errorMessage = $"{propertyName} should be false";
         return (condition, errorMessage);
     }
 }

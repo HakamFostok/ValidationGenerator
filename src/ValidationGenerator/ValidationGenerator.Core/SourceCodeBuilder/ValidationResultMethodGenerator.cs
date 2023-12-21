@@ -79,11 +79,51 @@ public class ValidationResultMethodGenerator
                          fullTypeName.Contains(typeof(int).FullName) ||
                          fullTypeName.Contains(typeof(long).FullName))
                 {
-                    if (property.PropertyName == "Age")
-                    {
-                        ;
-                    }
 
+                    var validationInfo = GetValidationInfo(attributeValidation, property, fullTypeName.Contains("?"));
+
+                    string conditionSourceCode = validationInfo.condition;
+                    string defaultErrorMessage = validationInfo.defaultErrorMessage;
+
+                    string customErrorMessage = GetCustomErrorMessage(attributeValidation);
+                    string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
+
+                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+
+                    if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                    {
+                        ifChecksForProperty.AppendLine(ifCheckSourceCode);
+
+                        if (!checkedProps.Contains(property.PropertyName))
+                        {
+                            checkedProps.Add(property.PropertyName);
+                        }
+                    }
+                }
+                else if (fullTypeName.Contains(typeof(bool).FullName))
+                {
+                    var validationInfo = GetValidationInfo(attributeValidation, property, fullTypeName.Contains("?"));
+
+                    string conditionSourceCode = validationInfo.condition;
+                    string defaultErrorMessage = validationInfo.defaultErrorMessage;
+
+                    string customErrorMessage = GetCustomErrorMessage(attributeValidation);
+                    string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
+
+                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+
+                    if (!string.IsNullOrEmpty(ifCheckSourceCode))
+                    {
+                        ifChecksForProperty.AppendLine(ifCheckSourceCode);
+
+                        if (!checkedProps.Contains(property.PropertyName))
+                        {
+                            checkedProps.Add(property.PropertyName);
+                        }
+                    }
+                }
+                else if (fullTypeName.Contains(typeof(DateTime).FullName))
+                {
                     var validationInfo = GetValidationInfo(attributeValidation, property, fullTypeName.Contains("?"));
 
                     string conditionSourceCode = validationInfo.condition;
@@ -124,6 +164,7 @@ public class ValidationResultMethodGenerator
     {
         switch (attributeValidation.AttributeName)
         {
+            // string
             case nameof(MustNotNullGeneratorAttribute):
                 return StringValidation.GetNotNull(property.PropertyName);
 
@@ -176,8 +217,51 @@ public class ValidationResultMethodGenerator
                 return IntegerValidation.GetInRange(minimum, maximum, property.PropertyName, isNullable);
 
             case nameof(CustomValidationIntegerAttribute):
-                string functionName = GetAttributeValue<string>(attributeValidation, nameof(CustomValidationIntegerAttribute.ValidationFunctionName));
-                return IntegerValidation.GetCustomValidation(functionName, property.PropertyName);
+                {
+                    string functionName = GetAttributeValue<string>(attributeValidation, nameof(CustomValidationIntegerAttribute.ValidationFunctionName));
+                    bool isAsync = GetAttributeValue<bool>(attributeValidation, nameof(CustomValidationIntegerAttribute.IsAsync));
+                    return IntegerValidation.GetCustomValidationFunction(functionName, property.PropertyName, isAsync);
+                }
+
+            // bool && bool?
+            case nameof(MustBeTrueGeneratorAttribute):
+                return BooleanValidation.GetTrue(property.PropertyName, isNullable);
+
+            case nameof(MustBeFalseGeneratorAttribute):
+                return BooleanValidation.GetFalse(property.PropertyName, isNullable);
+
+            case nameof(CustomValidationBooleanGeneratorAttribute):
+                {
+                    string functionName = GetAttributeValue<string>(attributeValidation, nameof(CustomValidationBooleanGeneratorAttribute.ValidationFunctionName));
+                    bool isAsync = GetAttributeValue<bool>(attributeValidation, nameof(CustomValidationBooleanGeneratorAttribute.IsAsync));
+                    return BooleanValidation.GetCustomValidationFunction(functionName, property.PropertyName, isAsync);
+                }
+
+            // DateTime && DateTime?
+
+            case nameof(MustNotBeDefaultDateTimeGeneratorAttribute):
+                return DateTimeValidation.GetNotDefault(property.PropertyName, isNullable);
+
+            case nameof(MustBePastDateTimeNowGeneratorAttribute):
+                return DateTimeValidation.GetPastDateTime(property.PropertyName, isNullable);
+
+            case nameof(MustBeFutureDateTimeNowGeneratorAttribute):
+                return DateTimeValidation.GetFutureDateTime(property.PropertyName, isNullable);
+
+            case nameof(MustBePastDateTimeUTCNowGeneratorAttribute):
+                return DateTimeValidation.GetPastDateTimeUTC(property.PropertyName, isNullable);
+
+            case nameof(MustBeFutureDateTimeUTCNowGeneratorAttribute):
+                return DateTimeValidation.GetFutureDateTimeUTC(property.PropertyName, isNullable);
+
+            case nameof(CustomValidationDateTimeGeneratorAttribute):
+                {
+                    string functionName = GetAttributeValue<string>(attributeValidation, nameof(CustomValidationDateTimeGeneratorAttribute.ValidationFunctionName));
+                    bool isAsync = GetAttributeValue<bool>(attributeValidation, nameof(CustomValidationDateTimeGeneratorAttribute.IsAsync));
+                    return DateTimeValidation.GetCustomValidationFunction(functionName, property.PropertyName, isAsync);
+                }
+
+
 
             default:
                 return (string.Empty, string.Empty);

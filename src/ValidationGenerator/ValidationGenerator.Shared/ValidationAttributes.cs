@@ -5,6 +5,13 @@ public class BaseValidationAttribute : Attribute
     public string ErrorMessage { get; set; }
 }
 
+public class CustomValidationFunctionAttribute : BaseValidationAttribute
+{
+    public string ValidationFunctionName { get; set;}
+
+    public bool IsAsync { get; set; }
+}
+
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotEmptyGeneratorAttribute : BaseValidationAttribute
 {
@@ -98,7 +105,56 @@ public sealed class MustBeInRangeIntegerGeneratorAttribute : BaseValidationAttri
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class CustomValidationIntegerAttribute : BaseValidationAttribute
+public sealed class CustomValidationIntegerAttribute : CustomValidationFunctionAttribute
 {
-    public string ValidationFunctionName { get; set; }
 }
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBeTrueGeneratorAttribute : BaseValidationAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBeFalseGeneratorAttribute : BaseValidationAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class CustomValidationBooleanGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustNotBeDefaultDateTimeGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBePastDateTimeNowGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBeFutureDateTimeNowGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBePastDateTimeUTCNowGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MustBeFutureDateTimeUTCNowGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class CustomValidationDateTimeGeneratorAttribute : CustomValidationFunctionAttribute
+{
+}
+
+
+
+
