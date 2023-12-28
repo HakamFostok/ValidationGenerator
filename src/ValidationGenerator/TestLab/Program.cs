@@ -1,12 +1,9 @@
-﻿
-
-using System.Text.Json;
+﻿using System.Text.Json;
 using TestLab;
-
 
 Console.WriteLine("Validation Generator");
 
-JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
+JsonSerializerOptions jsonSerializerOptions = new()
 {
     WriteIndented = true
 };
@@ -24,13 +21,5 @@ try
 }
 catch (Exception)
 {
-
     throw;
 }
-
-
-
-
-
-
-

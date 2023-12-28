@@ -52,7 +52,11 @@ public class ValidationGenerator : IIncrementalGenerator
             classesToGenerate.ForEach((x) =>
             {
                 x.SourceProductionContext = context;
-                context.AddSource(x.ClassName + "_Validator_G", SourceText.From(x.GetSourceCode(), Encoding.UTF8));
+                string code = x.GetSourceCode();
+
+                context.AddSource(x.ClassName + "_Validator.g", SourceText.From(code, Encoding.UTF8));
+
+                File.WriteAllText(@"C:\Test.cs", code);
             });
         }
         catch (Exception)
