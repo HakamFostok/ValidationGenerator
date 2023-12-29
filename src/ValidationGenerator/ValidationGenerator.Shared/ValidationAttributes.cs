@@ -15,13 +15,11 @@ public class CustomValidationFunctionAttribute : BaseValidationAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotEmptyGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotNullGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -39,25 +37,21 @@ public sealed class MaximumLengthGeneratorAttribute : BaseValidationAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustValidBase64GeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustValidEmailGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustValidAlphaNumericGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustContainSpecialCharacterGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -69,32 +63,26 @@ public sealed class RegexMatchGeneratorAttribute : BaseValidationAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotBeZeroGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustBeGreaterThanZeroGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustBeLowerThanZeroGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustBePositiveIntegerGeneratorAttribute : BaseValidationAttribute
 {
-
 }
-
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustBeNegativeIntegerGeneratorAttribute : BaseValidationAttribute
 {
-
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -123,7 +111,6 @@ public sealed class MustBeFalseGeneratorAttribute : BaseValidationAttribute
 public sealed class CustomValidationBooleanGeneratorAttribute : CustomValidationFunctionAttribute
 {
 }
-
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustNotBeDefaultDateTimeGeneratorAttribute : CustomValidationFunctionAttribute
@@ -154,7 +141,3 @@ public sealed class MustBeFutureDateTimeUTCNowGeneratorAttribute : CustomValidat
 public sealed class CustomValidationDateTimeGeneratorAttribute : CustomValidationFunctionAttribute
 {
 }
-
-
-
-

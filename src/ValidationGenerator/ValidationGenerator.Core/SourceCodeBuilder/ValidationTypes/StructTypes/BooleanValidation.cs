@@ -1,12 +1,10 @@
-﻿
+﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
 
-namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
-
-internal static class BooleanValidation 
+internal static class BooleanValidation
 {
-    public static  (string condition, string defaultErrorMessage) GetNotNull(string propertyName, bool isNullable)
+    internal static (string condition, string defaultErrorMessage) GetNotNull(string propertyName, bool isNullable)
     {
-        if(!isNullable)
+        if (!isNullable)
             return (string.Empty, string.Empty);
 
         string condition = $"{propertyName} is null";
@@ -14,14 +12,14 @@ internal static class BooleanValidation
         return (condition, errorMessage);
     }
 
-    public static  (string condition, string defaultErrorMessage) GetNotEmpty(string propertyName, bool isNullable)
+    internal static (string condition, string defaultErrorMessage) GetNotEmpty(string propertyName, bool isNullable)
     {
         string condition = isNullable ? $"{propertyName}.HasValue && !{propertyName}.Value" : $"!{propertyName}";
         string errorMessage = $"{propertyName} should be true";
         return (condition, errorMessage);
     }
 
-    public static  (string condition, string defaultErrorMessage) GetCustomValidationFunction(string functionName, string propertyName, bool isAsync)
+    internal static (string condition, string defaultErrorMessage) GetCustomValidationFunction(string functionName, string propertyName, bool isAsync)
     {
         if (string.IsNullOrEmpty(functionName))
             return (string.Empty, string.Empty);
@@ -29,18 +27,18 @@ internal static class BooleanValidation
         string errorMessage = $"{propertyName} does not satisfy the custom validation criteria";
         return (condition, errorMessage);
     }
-    public static (string condition, string defaultErrorMessage) GetTrue(string propertyName,bool isNullable)
+
+    internal static (string condition, string defaultErrorMessage) GetTrue(string propertyName, bool isNullable)
     {
         string condition = isNullable ? $"{propertyName}.HasValue && !{propertyName}.Value" : $"!{propertyName}";
         string errorMessage = $"{propertyName} should be true";
         return (condition, errorMessage);
     }
 
-    public static (string condition, string defaultErrorMessage) GetFalse(string propertyName, bool isNullable)
+    internal static (string condition, string defaultErrorMessage) GetFalse(string propertyName, bool isNullable)
     {
         string condition = isNullable ? $"{propertyName}.HasValue && {propertyName}.Value" : $"{propertyName}";
         string errorMessage = $"{propertyName} should be false";
         return (condition, errorMessage);
     }
 }
-

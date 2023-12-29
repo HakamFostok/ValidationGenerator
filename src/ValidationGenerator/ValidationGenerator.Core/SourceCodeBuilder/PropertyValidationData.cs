@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 
-
 namespace ValidationGenerator.Core.SourceCodeBuilder;
 
 public class PropertyValidationData
