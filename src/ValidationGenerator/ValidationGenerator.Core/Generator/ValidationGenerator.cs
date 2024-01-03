@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Text;
 using ValidationGenerator.Core.SourceCodeBuilder;
 
@@ -56,7 +55,7 @@ public class ValidationGenerator : IIncrementalGenerator
 
                 context.AddSource(x.ClassName + "_Validator.g", SourceText.From(code, Encoding.UTF8));
 
-                File.WriteAllText(@"C:\Test.cs", code);
+                //File.WriteAllText(@"C:\Test.cs", code);
             });
         }
         catch (Exception)

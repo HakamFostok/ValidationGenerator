@@ -4,7 +4,7 @@ namespace TestLab;
 
 [ValidationGenerator(
     GenerateThrowIfNotValid = false,
-    GenerateIsValidProperty = true,
+    GenerateIsValidProperty = false,
     GenerateValidationResult = true)]
 public partial class User
 {

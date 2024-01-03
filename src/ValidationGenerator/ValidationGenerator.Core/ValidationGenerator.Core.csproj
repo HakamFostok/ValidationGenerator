@@ -20,13 +20,10 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 	</PropertyGroup>
 
-	<ItemGroup>
-	</ItemGroup>
-
 	<!-- Nuget package's properties-->
 	<ItemGroup>
 		<!-- https://stackoverflow.com/a/65010790 -->
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>

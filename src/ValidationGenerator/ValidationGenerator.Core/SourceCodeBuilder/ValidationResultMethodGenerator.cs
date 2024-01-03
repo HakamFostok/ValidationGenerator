@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Text;
+using ValidationGenerator.Core.CodeTemplates;
 using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
 using ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.StructTypes;
 using ValidationGenerator.Shared;
@@ -18,26 +19,9 @@ public class ValidationResultMethodGenerator
     {
         (string methods, List<string> checkedProps) = GeneratePrivatePropertyValidationMethods(_properties);
         string resultSetSourceCode = GetPropertyValidationResultSetTemplate(checkedProps);
-        return GetMethodTemplate(resultSetSourceCode, checkedProps.Any() ? methods : string.Empty);
+        return Templates.ValidationResultMethodTemplates.GetValidationResultMethodTemplate(resultSetSourceCode, checkedProps.Count > 0 ? methods : string.Empty);
     }
 
-    private string GetMethodTemplate(string validationResultSetSourceCode, string privateMethodSourceCode)
-    {
-        return
-$$"""
-public ValidationGenerator.Shared.ValidationResult GetValidationResult()
-        {
-            ValidationGenerator.Shared.ValidationResult result = new();
-            result.ValidationResults = new List<ValidationGenerator.Shared.PropertyValidationResult>();
-
-            {{validationResultSetSourceCode}}
-    
-            return result;
-        }
-
-{{privateMethodSourceCode}}
-""";
-    }
 
     private (string methodsSourceCode, List<string> checkedProps) GeneratePrivatePropertyValidationMethods(List<PropertyValidationData> properties)
     {
@@ -65,7 +49,7 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                     string customErrorMessage = GetCustomErrorMessage(attributeValidation);
                     string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
 
-                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(conditionSourceCode, errorMessage);
 
                     if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
@@ -90,7 +74,7 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                     string customErrorMessage = GetCustomErrorMessage(attributeValidation);
                     string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
 
-                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(conditionSourceCode, errorMessage);
 
                     if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
@@ -112,7 +96,7 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                     string customErrorMessage = GetCustomErrorMessage(attributeValidation);
                     string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
 
-                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(conditionSourceCode, errorMessage);
 
                     if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
@@ -134,7 +118,7 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                     string customErrorMessage = GetCustomErrorMessage(attributeValidation);
                     string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
 
-                    string ifCheckSourceCode = GenerateIfCheckForPropertyValidation(conditionSourceCode, errorMessage);
+                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(conditionSourceCode, errorMessage);
 
                     if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
@@ -152,7 +136,7 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                 }
             }
 
-            string methodSourceCode = GetPrivatePropertyValidationResultMethodSourceCode(property.PropertyName, ifChecksForProperty.ToString());
+            string methodSourceCode = Templates.ValidationResultMethodTemplates.GetPrivateValidationResultMethodTemplate(property.PropertyName, ifChecksForProperty.ToString());
             result.AppendLine(methodSourceCode);
         }
 
@@ -262,15 +246,12 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
                     bool isAsync = GetAttributeValue<bool>(attributeValidation, nameof(CustomValidationDateTimeGeneratorAttribute.IsAsync));
                     return DateTimeValidation.GetCustomValidationFunction(functionName, property.PropertyName, isAsync);
                 }
-
-
-
             default:
                 return (string.Empty, string.Empty);
         }
     }
 
-    private T GetAttributeValue<T>(AttributeValidationData attributeValidation, string attributeName)
+    private static T GetAttributeValue<T>(AttributeValidationData attributeValidation, string attributeName)
     {
         var attributeArgument = attributeValidation.AttributeArguments.Find(arg => arg?.Name?.Equals(attributeName) == true);
         if (attributeArgument is null)
@@ -294,59 +275,20 @@ public ValidationGenerator.Shared.ValidationResult GetValidationResult()
             throw new Exception($"An error occurred during the conversion: {ex.Message}", ex);
         }
     }
-
-    private string GetCustomErrorMessage(AttributeValidationData attributeValidation)
+    private static string GetCustomErrorMessage(AttributeValidationData attributeValidation)
     {
         var errorMessageAttribute = attributeValidation.AttributeArguments.Find(x => x?.Name?.Equals(nameof(BaseValidationAttribute.ErrorMessage)) == true);
         return errorMessageAttribute?.Expression ?? string.Empty;
     }
-
     private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
     {
         StringBuilder stringBuilder = new();
         foreach (string propertyName in propertyNames)
         {
-            string temp = $$"""
-            var validationResult_{{propertyName}} = Validate_{{propertyName}}();
-            if (validationResult_{{propertyName}} is not null)
-            {
-                 result.ValidationResults.Add(validationResult_{{propertyName}});
-            }
-""";
+            string temp = Templates.ValidationResultMethodTemplates.GetValidationResultAndInsertIntoListTemplate(propertyName);
             stringBuilder.AppendLine(temp);
             stringBuilder.AppendLine();
         }
         return stringBuilder.ToString();
-    }
-
-    private static string GetPrivatePropertyValidationResultMethodSourceCode(string propertyName, string ifCheckForPropertySourceCode)
-    {
-        return
-$$"""
-        private ValidationGenerator.Shared.PropertyValidationResult? Validate_{{propertyName}}()
-        {
-            ValidationGenerator.Shared.PropertyValidationResult result = new ValidationGenerator.Shared.PropertyValidationResult()
-            {
-                PropertyName = "{{propertyName}}",
-                Value = {{propertyName}},
-                ErrorMessages = new()
-            };
-
-            {{ifCheckForPropertySourceCode}}
-            return result.ErrorMessages.Count > 0 ? result : null;
-        }
-
-""";
-    }
-
-    private static string GenerateIfCheckForPropertyValidation(string condition, string validationMessage)
-    {
-        return
-$$"""
-if ({{condition}})
-            {
-                result.ErrorMessages.Add("{{validationMessage}}");
-            }
-""";
     }
 }
