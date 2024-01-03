@@ -25,6 +25,6 @@ public class PropertyValidationResult
     public string PropertyName { get; set; } = string.Empty;
 
     // TODO: discuss the idea of making this generic
-    public object Value { get; set; } = null;
+    public object Value { get; set; }
     public List<string> ErrorMessages { get; set; } = new();
 }

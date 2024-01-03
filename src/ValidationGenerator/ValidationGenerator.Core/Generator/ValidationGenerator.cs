@@ -67,20 +67,20 @@ public class ValidationGenerator : IIncrementalGenerator
     private static List<ClassValidationData> GetTypesToGenerate(
         Compilation compilation,
         IEnumerable<ClassDeclarationSyntax> classes,
-        CancellationToken ct)
+        CancellationToken cancellationToken)
     {
         List<ClassValidationData> classesToGenerate = new();
-        INamedTypeSymbol validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
+        INamedTypeSymbol? validationGeneratorAttribute = compilation.GetTypeByMetadataName("ValidationGenerator.Shared.ValidationGeneratorAttribute");
         if (validationGeneratorAttribute is null)
         {
             return classesToGenerate;
         }
         foreach (ClassDeclarationSyntax classDeclarationSyntax in classes)
         {
-            ct.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
             SemanticModel semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax, ct) is not INamedTypeSymbol classSymbol)
+            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax, cancellationToken) is not INamedTypeSymbol classSymbol)
             {
                 continue;
             }
@@ -150,7 +150,7 @@ public class ValidationGenerator : IIncrementalGenerator
                     };
                     attributesValidationData.Add(attributeValidationData);
                 }
-                var equalsSyntax = property.DeclaringSyntaxReferences[0].GetSyntax() switch
+                var equalsSyntax = property.DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) switch
                 {
                     PropertyDeclarationSyntax propertySyntax => propertySyntax.Initializer,
                     VariableDeclaratorSyntax variableSyntax => variableSyntax.Initializer,

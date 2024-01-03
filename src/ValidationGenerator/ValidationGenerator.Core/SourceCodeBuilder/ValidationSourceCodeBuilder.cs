@@ -10,8 +10,8 @@ public class ClassValidationData
 {
     public SourceProductionContext SourceProductionContext { get; set; }
     public bool GenerateThrowIfNotValid { get; set; } = true;
-    public bool GenerateIsValidProperty { get; set; } = false;
-    public bool GenerateValidationResult { get; set; } = false;
+    public bool GenerateIsValidProperty { get; set; } 
+    public bool GenerateValidationResult { get; set; }
     public string NameSpace { get; set; }
     public string ClassName { get; set; }
     public List<PropertyValidationData> PropertyValidationList { get; set; }
