@@ -2,7 +2,9 @@
 using System.Text;
 using ValidationGenerator.Core.CodeTemplates;
 using ValidationGenerator.Domain;
+using ValidationGenerator.Core.CodeTemplates;
 using ValidationGenerator.Shared;
+
 
 namespace ValidationGenerator.Core.SourceCodeBuilder;
 
@@ -118,7 +120,6 @@ public class ClassValidationData
         // TODO: discuss if there is no namespace provided
         // TODO: discuss support for struct and record
         string version = typeof(ValidationGenerator).Assembly.GetName().Version.ToString();
-
         return Templates.GenerateClassTemplate(
             throwIfNotValidMethodDeclaration, 
             validationResultFunctionDeclaration, 
@@ -127,4 +128,6 @@ public class ClassValidationData
             ClassName,
             version);
     }
+
+    
 }

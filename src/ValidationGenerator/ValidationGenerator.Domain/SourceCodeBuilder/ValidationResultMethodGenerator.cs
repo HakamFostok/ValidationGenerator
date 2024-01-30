@@ -19,37 +19,27 @@ public sealed class ValidationResultMethodGenerator
         return Templates.ValidationResultMethodTemplates.GetValidationResultMethodTemplate(resultSetSourceCode, checkedProps.Count > 0 ? methods : string.Empty);
     }
 
+ 
 
-    private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
-    {
-        StringBuilder stringBuilder = new();
-        foreach (string propertyName in propertyNames)
-        {
-            string temp = Templates.ValidationResultMethodTemplates.GetValidationResultAndInsertIntoListTemplate(propertyName);
-            stringBuilder.AppendLine(temp);
-            stringBuilder.AppendLine();
-        }
-        return stringBuilder.ToString();
-    }
 
-//    private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
-//    {
-//        StringBuilder stringBuilder = new();
-//        foreach (string propertyName in propertyNames)
-//        {
-//            string temp = $$"""
-//            var validationResult_{{propertyName}} = Validate_{{propertyName}}();
-//            if (validationResult_{{propertyName}} is not null)
-//            {
-//                resultList ??= new();
-//                resultList.Add(validationResult_{{propertyName}});
-//            }
-//""";
-//            stringBuilder.AppendLine(temp);
-//            stringBuilder.AppendLine();
-//        }
-//        return stringBuilder.ToString();
-//    }
+    //    private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
+    //    {
+    //        StringBuilder stringBuilder = new();
+    //        foreach (string propertyName in propertyNames)
+    //        {
+    //            string temp = $$"""
+    //            var validationResult_{{propertyName}} = Validate_{{propertyName}}();
+    //            if (validationResult_{{propertyName}} is not null)
+    //            {
+    //                resultList ??= new();
+    //                resultList.Add(validationResult_{{propertyName}});
+    //            }
+    //""";
+    //            stringBuilder.AppendLine(temp);
+    //            stringBuilder.AppendLine();
+    //        }
+    //        return stringBuilder.ToString();
+    //    }
 
     private (string methodsSourceCode, List<string> checkedProps) GeneratePrivatePropertyValidationMethods()
     {
@@ -74,8 +64,7 @@ public sealed class ValidationResultMethodGenerator
                     string customErrorMessage = GetCustomErrorMessage(attributeValidation);
                     string errorMessage = !string.IsNullOrEmpty(customErrorMessage) ? customErrorMessage : defaultErrorMessage;
 
-                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(
-                        conditionSourceCode, errorMessage);
+                    string ifCheckSourceCode = Templates.ValidationResultMethodTemplates.CheckConditionAndInsertIntoErrorMessagesTemplate(conditionSourceCode, errorMessage);
 
                     if (!string.IsNullOrEmpty(ifCheckSourceCode))
                     {
@@ -305,5 +294,16 @@ public sealed class ValidationResultMethodGenerator
         AttributeArgumentInfo errorMessageAttribute = attributeValidation.AttributeArguments.Find(x => x?.Name?.Equals(nameof(BaseValidationAttribute.ErrorMessage)) == true);
         return errorMessageAttribute?.Expression ?? string.Empty;
     }
-   
+    private static string GetPropertyValidationResultSetTemplate(List<string> propertyNames)
+    {
+        StringBuilder stringBuilder = new();
+        foreach (string propertyName in propertyNames)
+        {
+            string temp = Templates.ValidationResultMethodTemplates.GetValidationResultAndInsertIntoListTemplate(propertyName);
+            stringBuilder.AppendLine(temp);
+            stringBuilder.AppendLine();
+        }
+        return stringBuilder.ToString();
+    }
+
 }
