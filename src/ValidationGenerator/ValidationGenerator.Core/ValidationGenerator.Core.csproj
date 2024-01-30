@@ -20,13 +20,10 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 	</PropertyGroup>
 
-	<ItemGroup>
-	</ItemGroup>
-
 	<!-- Nuget package's properties-->
 	<ItemGroup>
 		<!-- https://stackoverflow.com/a/65010790 -->
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,14 +37,15 @@
 
 	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
-		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	
+		<None Include="$(OutputPath)\ValidationGenerator.Domain.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<!-- Pack the attributes dll in the lib\netstandard2.0 path -->
-		<None Include="$(OutputPath)\ValidationGenerator.Shared.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
+		<None Include="$(OutputPath)\ValidationGenerator.Domain.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
+
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ValidationGenerator.Shared\ValidationGenerator.Shared.csproj" />
+		<ProjectReference Include="..\ValidationGenerator.Domain\ValidationGenerator.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

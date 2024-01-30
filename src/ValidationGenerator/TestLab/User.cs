@@ -3,10 +3,10 @@
 namespace TestLab;
 
 [ValidationGenerator(
-    GenerateThrowIfNotValid = false,
+    GenerateThrowIfNotValid = true,
     GenerateIsValidProperty = true,
     GenerateValidationResult = true)]
-public partial class User
+public partial class User   
 {
     [MustNotNullGenerator(ErrorMessage = "User Id cannot be null")]
     public string? Id { get; set; }

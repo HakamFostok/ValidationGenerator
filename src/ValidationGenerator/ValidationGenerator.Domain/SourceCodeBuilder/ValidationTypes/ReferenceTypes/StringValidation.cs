@@ -1,4 +1,4 @@
-﻿namespace ValidationGenerator.Core.SourceCodeBuilder.ValidationTypes.ReferenceTypes;
+﻿namespace ValidationGenerator.Domain;
 
 internal static class StringValidation
 {

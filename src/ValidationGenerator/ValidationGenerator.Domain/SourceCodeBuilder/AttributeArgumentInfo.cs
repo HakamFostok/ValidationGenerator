@@ -1,4 +1,4 @@
-﻿namespace ValidationGenerator.Core.SourceCodeBuilder;
+﻿namespace ValidationGenerator.Domain;
 
 public class AttributeArgumentInfo
 {

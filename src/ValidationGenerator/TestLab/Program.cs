@@ -15,9 +15,12 @@ try
         Name = "asd",
         Id = null
     };
-    var result = user.GetValidationResult();
 
-    Console.WriteLine(JsonSerializer.Serialize(result, jsonSerializerOptions));
+    ValidationGenerator.Shared.ValidationResult v = user.GetValidationResult();
+    bool b = user.IsValid;
+    user.ThrowIfNotValid();
+
+    //Console.WriteLine(JsonSerializer.Serialize(result, jsonSerializerOptions));
 }
 catch (Exception)
 {

@@ -2,7 +2,7 @@
 
 namespace Benchmarking;
 
-public class CustomerValidator : AbstractValidator<Customer_Fluent>
+public class CustomerValidator : AbstractValidator<CustomerFluent>
 {
     public CustomerValidator()
     {

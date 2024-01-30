@@ -1,11 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
-
-namespace ValidationGenerator.Core.SourceCodeBuilder;
+﻿namespace ValidationGenerator.Domain;
 
 public class PropertyValidationData
 {
     public string PropertyName { get; set; }
-    public ITypeSymbol PropertyType { get; set; }
+    public string PropertyType { get; set; }
+    public bool IsReferenceType { get; set; }
+
     public List<AttributeValidationData> AttributeValidationList { get; set; }
     public PropertyValidationData()
     {

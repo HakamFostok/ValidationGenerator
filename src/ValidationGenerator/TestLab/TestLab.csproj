@@ -8,11 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ValidationGenerator.Core\ValidationGenerator.Core.csproj" 
-						  OutputItemType="Analyzer" 
-						  ReferenceOutputAssembly="false"/>
-
-		<ProjectReference Include="..\ValidationGenerator.Shared\ValidationGenerator.Shared.csproj" 
+		<ProjectReference Include="..\ValidationGenerator.Core\ValidationGenerator.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\ValidationGenerator.Domain\ValidationGenerator.Domain.csproj" 
 						  OutputItemType="Analyzer" 
 						  ReferenceOutputAssembly="true"/>
 	</ItemGroup>

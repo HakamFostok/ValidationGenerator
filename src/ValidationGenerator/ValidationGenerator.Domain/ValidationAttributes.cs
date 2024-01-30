@@ -7,7 +7,7 @@ public class BaseValidationAttribute : Attribute
 
 public class CustomValidationFunctionAttribute : BaseValidationAttribute
 {
-    public string ValidationFunctionName { get; set;}
+    public string ValidationFunctionName { get; set; }
 
     public bool IsAsync { get; set; }
 }
@@ -85,6 +85,7 @@ public sealed class MustBeNegativeIntegerGeneratorAttribute : BaseValidationAttr
 {
 }
 
+// TODO: handle all numeric types
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class MustBeInRangeIntegerGeneratorAttribute : BaseValidationAttribute
 {

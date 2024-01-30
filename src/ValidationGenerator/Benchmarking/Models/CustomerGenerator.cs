@@ -2,8 +2,8 @@
 
 namespace Benchmarking;
 
-[ValidationGenerator(GenerateValidationResult = true, GenerateThrowIfNotValid = false, GenerateIsValidProperty = false)]
-public partial class Customer_Generator
+[ValidationGenerator(GenerateValidationResult = true, GenerateThrowIfNotValid = true, GenerateIsValidProperty = true)]
+public partial class CustomerGenerator
 {
     [MustNotEmptyGenerator]
     public string Id { get; set; } = "0ecde2d9-e0e7-4e9e-9bef-e3ccd10586e7";
