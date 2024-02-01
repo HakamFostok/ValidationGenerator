@@ -17,9 +17,8 @@ try
     };
 
     ValidationGenerator.Shared.ValidationResult v = user.GetValidationResult();
+    bool isValid = user.IsValid;
     user.ThrowIfNotValid();
-
-    //Console.WriteLine(JsonSerializer.Serialize(result, jsonSerializerOptions));
 }
 catch (Exception)
 {

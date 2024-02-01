@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Text;
+using ValidationGenerator.Core.Extensions;
 using ValidationGenerator.Domain;
 using ValidationGenerator.Shared;
 
@@ -13,6 +14,7 @@ namespace ValidationGenerator.Core;
 [Generator]
 public class ValidationGenerator : IIncrementalGenerator
 {
+    private static readonly string sourceCodeOutputPath = @"C:\Test.cs";
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
@@ -53,24 +55,20 @@ public class ValidationGenerator : IIncrementalGenerator
         foreach (ClassValidationData classValidationData in classesToGenerate)
         {
             string code = classValidationData.GenerateFileSourceCode();
-            code = FormatCSharpCode(code);
-            context.AddSource(classValidationData.ClassName + "_Validator.g", SourceText.From(code, Encoding.UTF8));
-            File.WriteAllText(@"C:\Test.cs", code);
+            context.AddSource(classValidationData.ClassName + "_Validator.g", SourceText.From(code.FormatCode(), Encoding.UTF8));
+            
+            if (!File.Exists(sourceCodeOutputPath))
+            {
+                FileStream fileStream = File.Create(sourceCodeOutputPath);
+                fileStream.Dispose();
+            }
+            else
+            {
+                File.WriteAllText(sourceCodeOutputPath, code);
+            }
         }
     }
 
-    /// <summary>
-    /// Format source generated code
-    /// </summary>
-    /// <param name="code"></param>
-    /// <returns></returns>
-    static string FormatCSharpCode(string code)
-    {
-        var tree = CSharpSyntaxTree.ParseText(code);
-        var root = tree.GetRoot().NormalizeWhitespace();
-        var ret = root.ToFullString();
-        return ret;
-    }
 
     [Pure]
     private static List<ClassValidationData> GetTypesToGenerate(
