@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using ValidationGenerator.Core.Extensions;
@@ -14,7 +15,7 @@ namespace ValidationGenerator.Core;
 [Generator]
 public class ValidationGenerator : IIncrementalGenerator
 {
-    private static readonly string sourceCodeOutputPath = @"C:\Test.cs";
+    private const string sourceCodeOutputPath = @"C:\Test.cs";
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
@@ -56,16 +57,26 @@ public class ValidationGenerator : IIncrementalGenerator
         {
             string code = classValidationData.GenerateFileSourceCode();
             context.AddSource(classValidationData.ClassName + "_Validator.g", SourceText.From(code.FormatCode(), Encoding.UTF8));
-            
+            SaveOutput(code);
+        }
+    }
+
+    public static void SaveOutput(string code)
+    {
+        try
+        {
             if (!File.Exists(sourceCodeOutputPath))
             {
-                FileStream fileStream = File.Create(sourceCodeOutputPath);
-                fileStream.Dispose();
+                using FileStream fileStream = File.Create(sourceCodeOutputPath);
             }
             else
             {
                 File.WriteAllText(sourceCodeOutputPath, code);
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
 
