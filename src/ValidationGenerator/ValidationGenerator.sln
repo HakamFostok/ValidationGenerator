@@ -5,24 +5,20 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Core", "ValidationGenerator.Core\ValidationGenerator.Core.csproj", "{C40788AD-7EA1-4795-A7A1-50D227D10C07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLab", "TestLab\TestLab.csproj", "{7F39E41B-033E-437A-BAC3-1CBA470C448D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.TestLab", "ValidationGenerator.TestLab\ValidationGenerator.TestLab.csproj", "{7F39E41B-033E-437A-BAC3-1CBA470C448D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plans", "Plans", "{4C4471F0-B045-4744-89FC-A29FEC3B85BC}"
-	ProjectSection(SolutionItems) = preProject
-		Step-1.txt = Step-1.txt
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Benchmarking", "ValidationGenerator.Benchmarking\ValidationGenerator.Benchmarking.csproj", "{41B1A4DA-EF36-44CD-A18F-B8418E95D28A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Domain", "ValidationGenerator.Domain\ValidationGenerator.Domain.csproj", "{51052C54-A42E-4985-AFEB-448BC27E7D55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationGenerator.Tests", "ValidationGenerator.Tests\ValidationGenerator.Tests.csproj", "{44FCFF65-CFBA-46B4-A18C-C0C275183CCB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{50125DA8-6069-4908-A8C0-2BD451C78452}"
 	ProjectSection(SolutionItems) = preProject
 		..\Directory.Build.props = ..\Directory.Build.props
 		README.md = README.md
+		Step-1.txt = Step-1.txt
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarking", "Benchmarking\Benchmarking.csproj", "{41B1A4DA-EF36-44CD-A18F-B8418E95D28A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationGenerator.Domain", "ValidationGenerator.Domain\ValidationGenerator.Domain.csproj", "{51052C54-A42E-4985-AFEB-448BC27E7D55}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationGenerator.Tests", "ValidationGenerator.Tests\ValidationGenerator.Tests.csproj", "{44FCFF65-CFBA-46B4-A18C-C0C275183CCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
