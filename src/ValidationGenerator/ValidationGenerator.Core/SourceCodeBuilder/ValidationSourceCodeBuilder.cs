@@ -2,7 +2,6 @@
 using System.Text;
 using ValidationGenerator.Core.CodeTemplates;
 using ValidationGenerator.Domain;
-using ValidationGenerator.Core.CodeTemplates;
 using ValidationGenerator.Shared;
 
 

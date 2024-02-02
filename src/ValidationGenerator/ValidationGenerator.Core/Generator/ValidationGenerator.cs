@@ -1,10 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
+using ValidationGenerator.Core.Extensions;
 using ValidationGenerator.Domain;
 using ValidationGenerator.Shared;
 
@@ -13,6 +15,7 @@ namespace ValidationGenerator.Core;
 [Generator]
 public class ValidationGenerator : IIncrementalGenerator
 {
+    private const string sourceCodeOutputPath = @"C:\Test.cs";
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 
@@ -53,11 +56,30 @@ public class ValidationGenerator : IIncrementalGenerator
         foreach (ClassValidationData classValidationData in classesToGenerate)
         {
             string code = classValidationData.GenerateFileSourceCode();
-
-            context.AddSource(classValidationData.ClassName + "_Validator.g", SourceText.From(code, Encoding.UTF8));
-            File.WriteAllText(@"C:\Test.cs", code);
+            context.AddSource(classValidationData.ClassName + "_Validator.g", SourceText.From(code.FormatCode(), Encoding.UTF8));
+            SaveOutput(code);
         }
     }
+
+    public static void SaveOutput(string code)
+    {
+        try
+        {
+            if (!File.Exists(sourceCodeOutputPath))
+            {
+                using FileStream fileStream = File.Create(sourceCodeOutputPath);
+            }
+            else
+            {
+                File.WriteAllText(sourceCodeOutputPath, code);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
 
     [Pure]
     private static List<ClassValidationData> GetTypesToGenerate(
