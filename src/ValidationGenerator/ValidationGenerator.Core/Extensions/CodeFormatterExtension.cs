@@ -10,6 +10,7 @@ internal static class CodeFormatterExtension
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
+    /// <seealso href="https://stackoverflow.com/a/47152803"/>
     internal static string FormatCode(this string code)
     {
         if (string.IsNullOrEmpty(code))

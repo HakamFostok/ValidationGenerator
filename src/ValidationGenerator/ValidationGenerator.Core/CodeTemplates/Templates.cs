@@ -37,10 +37,8 @@ internal static class Templates
                  {{isValidPropertyDeclaration}}
              }
          }
-        """;
+         """;
     }
-
-
 
     public static class ValidationResultMethodTemplates
     {
@@ -52,25 +50,25 @@ internal static class Templates
             {
                  result.ValidationResults.Add(validationResult_{{propertyName}});
             }
-           """;
+            """;
         }
 
         public static string GetPrivateValidationResultMethodTemplate(string propertyName,string ifCheckForPropertySourceCode)
         {
             return
             $$"""
-                private ValidationGenerator.Shared.PropertyValidationResult? Validate_{{propertyName}}()
+            private ValidationGenerator.Shared.PropertyValidationResult? Validate_{{propertyName}}()
+            {
+                ValidationGenerator.Shared.PropertyValidationResult result = new ValidationGenerator.Shared.PropertyValidationResult()
                 {
-                    ValidationGenerator.Shared.PropertyValidationResult result = new ValidationGenerator.Shared.PropertyValidationResult()
-                    {
-                        PropertyName = "{{propertyName}}",
-                        Value = {{propertyName}},
-                        ErrorMessages = new()
-                    };
+                    PropertyName = "{{propertyName}}",
+                    Value = {{propertyName}},
+                    ErrorMessages = new()
+                };
 
-                    {{ifCheckForPropertySourceCode}}
-                    return result.ErrorMessages.Count > 0 ? result : null;
-                }
+                {{ifCheckForPropertySourceCode}}
+                return result.ErrorMessages.Count > 0 ? result : null;
+            }
             """;
         }
 
@@ -78,9 +76,9 @@ internal static class Templates
         {
             return $$"""
             if ({{condition}})
-                        {
-                            result.ErrorMessages.Add("{{validationMessage}}");
-                        }
+            {
+                result.ErrorMessages.Add("{{validationMessage}}");
+            }
             """;
         }
 
@@ -89,18 +87,17 @@ internal static class Templates
             return
             $$"""
             public ValidationGenerator.Shared.ValidationResult GetValidationResult()
-                    {
-                        ValidationGenerator.Shared.ValidationResult result = new();
-                        result.ValidationResults = new List<ValidationGenerator.Shared.PropertyValidationResult>();
+            {
+                ValidationGenerator.Shared.ValidationResult result = new();
+                result.ValidationResults = new List<ValidationGenerator.Shared.PropertyValidationResult>();
             
-                        {{validationResultSetSourceCode}}
-                
-                        return result;
-                    }
+                {{validationResultSetSourceCode}}
+            
+                return result;
+            }
             
             {{privateMethodSourceCode}}
             """;
         }
     }
-
 }
