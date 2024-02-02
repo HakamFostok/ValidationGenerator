@@ -1,6 +1,6 @@
 ﻿using ValidationGenerator.Shared;
 
-namespace TestLab;
+namespace ValidationGenerator.Tests;
 
 [ValidationGenerator(
     GenerateThrowIfNotValid = true,
