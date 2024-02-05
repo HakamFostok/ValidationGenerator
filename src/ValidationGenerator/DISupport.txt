@@ -1,0 +1,70 @@
+
+
+Desing :
+
+public interface IRepo
+{
+    Task<int> GetData();
+}
+
+
+public class UserX
+{
+    public string Username { get; set; }
+
+    public int Age { get; set; }
+}
+
+public class Prop : Attribute
+{
+    public Prop(string propName)
+    {
+
+    }
+}
+
+public class ClassAtt<T> : Attribute
+{
+
+}
+
+
+
+public class Must : Attribute
+{
+
+}
+
+[ClassAtt<UserX>]
+public partial class ValidateUser
+{
+    private readonly IRepo _repo;
+    public ValidateUser(IRepo repo)
+    {
+        _repo = repo; 
+    }
+
+    [Prop(nameof(UserX.Username))]
+    public partial bool IsUserNameEmpty();
+
+    [Must] // return type Task<bool>/bool/ValueTask<bool> and no parameters allowed
+    public async Task<bool> CheckAgeIsValid() 
+    {
+        int data = await _repo.GetData();
+        return data > 10;
+    } 
+}
+
+//GENERATED CODE
+public partial class ValidateUser
+{
+    public partial bool IsUserNameEmpty()
+    {
+        return false;
+    }
+
+    public object ValitionResult(UserX obj)
+    {
+
+    }
+}
